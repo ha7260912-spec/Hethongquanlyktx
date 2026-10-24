@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Đăng Ký Phòng Cho Sinh Viên</h3>
+<div class="card shadow-sm col-md-6">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label>Chọn Sinh Viên (*)</label>
+                <select name="MaSV" class="form-select" required>
+                    <option value="">-- Chọn sinh viên --</option>
+                    {% for sv in sinhviens %}
+                    <option value="{{ sv.MaSV }}">{{ sv.MaSV }} - {{ sv.HoTen }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label>Chọn Phòng (*)</label>
+                <select name="SoPhong" class="form-select" required>
+                    <option value="">-- Chọn phòng --</option>
+                    {% for p in phongs %}
+                    <option value="{{ p.SoPhong }}">
+                        {{ p.SoPhong }} (Hiện tại: {{ p.DangO }}/{{ p.SoNguoiToiDa }} người)
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>Ngày bắt đầu (*)</label>
+                    <input type="date" name="NgayBatDau" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label>Ngày kết thúc</label>
+                    <input type="date" name="NgayKetThuc" class="form-control">
+                    <small class="text-muted">Bỏ trống nếu còn đang ở</small>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary">Xác nhận Đăng Ký</button>
+            <a href="{{ url_for('dangkyphong.list_dk') }}" class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

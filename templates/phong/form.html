@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Thêm Phòng Mới</h3>
+<div class="card shadow-sm col-md-6">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label>Số phòng (*)</label>
+                <input type="text" name="SoPhong" class="form-control" required placeholder="VD: P105">
+            </div>
+            <div class="mb-3">
+                <label>Loại phòng</label>
+                <input type="text" name="LoaiPhong" class="form-control" placeholder="VD: Phòng 4 người">
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>Đơn giá / Tháng (*)</label>
+                    <input type="number" name="DonGia" class="form-control" required value="500000">
+                </div>
+                <div class="col-md-6">
+                    <label>Số người tối đa (*)</label>
+                    <input type="number" name="SoNguoiToiDa" class="form-control" required value="4">
+                </div>
+            </div>
+            <button class="btn btn-primary">Thêm Phòng</button>
+            <a href="{{ url_for('phong.list_p') }}" class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

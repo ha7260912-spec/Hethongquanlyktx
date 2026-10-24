@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h3>Danh sách Phòng</h3>
+    <a href="{{ url_for('phong.them_p') }}" class="btn btn-success"><i class="fas fa-plus"></i> Thêm phòng</a>
+</div>
+
+<table class="table table-bordered table-hover shadow-sm bg-white">
+    <thead class="table-dark">
+        <tr>
+            <th>Số Phòng</th>
+            <th>Loại Phòng</th>
+            <th>Đơn Giá (VNĐ)</th>
+            <th>Sức Chứa</th>
+            <th>Đang Ở</th>
+            <th>Trạng Thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in rows %}
+        <tr>
+            <td><strong>{{ r.SoPhong }}</strong></td>
+            <td>{{ r.LoaiPhong }}</td>
+            <td>{{ "{:,.0f}".format(r.DonGia) }}</td>
+            <td>{{ r.SoNguoiToiDa }}</td>
+            <td>{{ r.DangO }}</td>
+            <td>
+                {% if r.DangO >= r.SoNguoiToiDa %}
+                    <span class="badge bg-danger">Đã Đầy</span>
+                {% else %}
+                    <span class="badge bg-success">Còn Trống ({{ r.SoNguoiToiDa - r.DangO }})</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

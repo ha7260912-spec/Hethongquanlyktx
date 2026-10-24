@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h3>Lịch sử Đăng ký Phòng</h3>
+    <a href="{{ url_for('dangkyphong.them_dk') }}" class="btn btn-success"><i class="fas fa-plus"></i> Đăng ký mới</a>
+</div>
+
+<div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> Hệ thống tự động chặn nếu phòng đã đạt số người tối đa (nhờ Trigger CSDL).
+</div>
+
+<table class="table table-bordered table-hover shadow-sm bg-white">
+    <thead class="table-dark">
+        <tr>
+            <th>Mã ĐK</th>
+            <th>Mã SV</th>
+            <th>Họ Tên</th>
+            <th>Phòng</th>
+            <th>Ngày Bắt Đầu</th>
+            <th>Ngày Kết Thúc</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in rows %}
+        <tr>
+            <td>{{ r.MaDK }}</td>
+            <td>{{ r.MaSV }}</td>
+            <td>{{ r.HoTen }}</td>
+            <td><strong>{{ r.SoPhong }}</strong> ({{ r.LoaiPhong }})</td>
+            <td>{{ r.NgayBatDau }}</td>
+            <td>{{ r.NgayKetThuc if r.NgayKetThuc else 'Đang ở' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted">Chưa có dữ liệu đăng ký.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

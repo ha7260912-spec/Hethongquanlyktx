@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h3>Danh sách Sinh Viên</h3>
+    <a href="{{ url_for('sinhvien.them_sv') }}" class="btn btn-success"><i class="fas fa-plus"></i> Thêm mới</a>
+</div>
+
+<form class="row mb-3" method="GET">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" placeholder="Tìm theo Mã SV hoặc Tên..." value="{{ search }}">
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Tìm kiếm</button>
+    </div>
+</form>
+
+<table class="table table-bordered table-hover shadow-sm bg-white">
+    <thead class="table-dark">
+        <tr><th>Mã SV</th><th>CMT</th><th>Họ Tên</th><th>Lớp</th><th>Quê Quán</th><th>Hành động</th></tr>
+    </thead>
+    <tbody>
+        {% for r in rows %}
+        <tr>
+            <td>{{ r.MaSV }}</td><td>{{ r.SoCMT }}</td><td>{{ r.HoTen }}</td>
+            <td>{{ r.Lop }}</td><td>{{ r.QueQuan }}</td>
+            <td>
+                <a href="{{ url_for('sinhvien.sua_sv', masv=r.MaSV) }}" class="btn btn-sm btn-warning">Sửa</a>
+                {% if session.role == 'admin' %}
+                <form action="{{ url_for('sinhvien.xoa_sv', masv=r.MaSV) }}" method="post" class="d-inline">
+                    <button class="btn btn-sm btn-danger" onclick="return confirm('Xóa SV này?')">Xóa</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted">Không tìm thấy sinh viên nào.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination justify-content-center">
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {{ 'active' if p == current_page }}">
+            <a class="page-link" href="{{ url_for('sinhvien.list_sv', page=p, search=search) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endblock %}

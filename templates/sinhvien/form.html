@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{{ action }} Sinh Viên</h3>
+<div class="card shadow-sm col-md-8">
+    <div class="card-body">
+        <form method="post">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label>Mã SV (*)</label>
+                    <input type="text" name="MaSV" class="form-control" value="{{ sv.MaSV if sv else '' }}" {{ 'readonly' if action == 'Sửa' }} required>
+                </div>
+                <div class="col-md-6">
+                    <label>Số CMT (*)</label>
+                    <input type="text" name="SoCMT" class="form-control" value="{{ sv.SoCMT if sv else '' }}" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label>Họ Tên (*)</label>
+                <input type="text" name="HoTen" class="form-control" value="{{ sv.HoTen if sv else '' }}" required>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label>Ngày sinh</label>
+                    <input type="date" name="NgaySinh" class="form-control" value="{{ sv.NgaySinh if sv and sv.NgaySinh else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label>Lớp</label>
+                    <input type="text" name="Lop" class="form-control" value="{{ sv.Lop if sv else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label>Quê quán</label>
+                    <input type="text" name="QueQuan" class="form-control" value="{{ sv.QueQuan if sv else '' }}">
+                </div>
+            </div>
+            <button class="btn btn-primary">Lưu dữ liệu</button>
+            <a href="{{ url_for('sinhvien.list_sv') }}" class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
