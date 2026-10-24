@@ -1,50 +1,101 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="d-flex justify-content-between mb-3">
-    <h3>Danh sách Sinh Viên</h3>
-    <a href="{{ url_for('sinhvien.them_sv') }}" class="btn btn-success"><i class="fas fa-plus"></i> Thêm mới</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0 text-dark"><i class="fas fa-users text-primary me-2"></i> Quản lý Sinh Viên</h4>
+    <a href="{{ url_for('sinhvien.them_sv') }}" class="btn btn-primary"><i class="fas fa-user-plus me-2"></i> Thêm Sinh Viên</a>
 </div>
 
-<form class="row mb-3" method="GET">
-    <div class="col-md-4">
-        <input type="text" name="search" class="form-control" placeholder="Tìm theo Mã SV hoặc Tên..." value="{{ search }}">
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-primary w-100">Tìm kiếm</button>
-    </div>
-</form>
+<div class="card-custom p-3 mb-4">
+    <form class="row g-2" method="GET">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-search"></i></span>
+                <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Tìm tên hoặc mã SV..." value="{{ search }}">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-light border w-100 fw-bold">Tìm kiếm</button>
+        </div>
+    </form>
+</div>
 
-<table class="table table-bordered table-hover shadow-sm bg-white">
-    <thead class="table-dark">
-        <tr><th>Mã SV</th><th>CMT</th><th>Họ Tên</th><th>Lớp</th><th>Quê Quán</th><th>Hành động</th></tr>
-    </thead>
-    <tbody>
-        {% for r in rows %}
-        <tr>
-            <td>{{ r.MaSV }}</td><td>{{ r.SoCMT }}</td><td>{{ r.HoTen }}</td>
-            <td>{{ r.Lop }}</td><td>{{ r.QueQuan }}</td>
-            <td>
-                <a href="{{ url_for('sinhvien.sua_sv', masv=r.MaSV) }}" class="btn btn-sm btn-warning">Sửa</a>
-                {% if session.role == 'admin' %}
-                <form action="{{ url_for('sinhvien.xoa_sv', masv=r.MaSV) }}" method="post" class="d-inline">
-                    <button class="btn btn-sm btn-danger" onclick="return confirm('Xóa SV này?')">Xóa</button>
-                </form>
-                {% endif %}
-            </td>
-        </tr>
-        {% else %}
-        <tr><td colspan="6" class="text-center text-muted">Không tìm thấy sinh viên nào.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card-custom overflow-hidden">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>Mã SV</th>
+                <th>Họ Tên</th>
+                <th>Lớp</th>
+                <th>Phòng Ở</th>
+                <th>Trạng Thái</th>
+                <th class="text-end">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in rows %}
+            <tr>
+                <td><span class="fw-bold text-secondary">{{ r.MaSV }}</span></td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle me-2 d-flex align-items-center justify-content-center fw-bold" style="width: 35px; height: 35px;">
+                            {{ r.HoTen[0] }}
+                        </div>
+                        <span class="fw-bold text-dark">{{ r.HoTen }}</span>
+                    </div>
+                </td>
+                <td><span class="badge bg-light text-dark border">{{ r.Lop }}</span></td>
+                <td>
+                    {% if r.SoPhong %}
+                        <span class="badge bg-info bg-opacity-25 text-dark fw-bold"><i class="fas fa-door-open me-1"></i> {{ r.SoPhong }}</span>
+                    {% else %}
+                        <span class="text-muted small">Chưa xếp phòng</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if r.SoPhong %}
+                        <span class="badge bg-success bg-opacity-25 text-success"><i class="fas fa-check-circle me-1"></i> Đang ở</span>
+                    {% else %}
+                        <span class="badge bg-secondary bg-opacity-25 text-secondary">Ngoại trú</span>
+                    {% endif %}
+                </td>
+                <td class="text-end">
+                    <a href="{{ url_for('sinhvien.in_the', masv=r.MaSV) }}" target="_blank" class="btn btn-sm btn-light text-info btn-icon shadow-sm me-1" title="In thẻ"><i class="fas fa-print"></i></a>
+                    <a href="{{ url_for('sinhvien.sua_sv', masv=r.MaSV) }}" class="btn btn-sm btn-light text-warning btn-icon shadow-sm me-1" title="Sửa"><i class="fas fa-pen"></i></a>
+                    
+                    {% if session.role == 'admin' %}
+                    <button onclick="confirmDelete('{{ r.MaSV }}', '{{ r.HoTen }}')" class="btn btn-sm btn-light text-danger btn-icon shadow-sm" title="Xóa"><i class="fas fa-trash"></i></button>
+                    <form id="del-{{ r.MaSV }}" action="{{ url_for('sinhvien.xoa_sv', masv=r.MaSV) }}" method="post" class="d-none"></form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-5">Không tìm thấy sinh viên nào.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-<nav>
+<nav class="mt-4">
     <ul class="pagination justify-content-center">
         {% for p in range(1, total_pages + 1) %}
-        <li class="page-item {{ 'active' if p == current_page }}">
-            <a class="page-link" href="{{ url_for('sinhvien.list_sv', page=p, search=search) }}">{{ p }}</a>
-        </li>
+        <li class="page-item {{ 'active' if p == current_page }}"><a class="page-link rounded-circle mx-1" href="{{ url_for('sinhvien.list_sv', page=p, search=search) }}">{{ p }}</a></li>
         {% endfor %}
     </ul>
 </nav>
+
+<script>
+    function confirmDelete(masv, hoten) {
+        Swal.fire({
+            title: 'Xóa sinh viên?',
+            html: "Hồ sơ của <b>" + hoten + "</b> sẽ bị xóa vĩnh viễn!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) document.getElementById('del-' + masv).submit();
+        })
+    }
+</script>
 {% endblock %}

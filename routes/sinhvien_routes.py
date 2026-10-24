@@ -69,3 +69,16 @@ def xoa_sv(masv):
     else: 
         flash(err, "danger")
     return redirect(url_for("sinhvien.list_sv"))
+
+# TÍNH NĂNG IN THẺ SINH VIÊN
+@bp.route("/in-the/<masv>")
+@login_required
+def in_the(masv):
+    # Lấy thông tin sinh viên
+    sv = sinhvien_service.lay_chi_tiet(masv)
+    if not sv:
+        flash("Không tìm thấy sinh viên!", "danger")
+        return redirect(url_for("sinhvien.list_sv"))
+    
+    # Trả về giao diện in thẻ
+    return render_template("sinhvien/in_the.html", sv=sv)

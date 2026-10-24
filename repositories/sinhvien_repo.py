@@ -5,13 +5,23 @@ def get_all(search="", page=1, per_page=10):
     cur = conn.cursor(dictionary=True)
     offset = (page - 1) * per_page
     
-    sql = "SELECT * FROM SinhVien WHERE MaSV LIKE %s OR HoTen LIKE %s ORDER BY MaSV LIMIT %s OFFSET %s"
+    # Nâng cấp SQL: Dùng LEFT JOIN để lấy thêm cột Số Phòng (SoPhong)
+    sql = """
+        SELECT sv.*, p.SoPhong 
+        FROM SinhVien sv
+        LEFT JOIN DangKyPhong dk ON sv.MaSV = dk.MaSV AND dk.NgayKetThuc IS NULL
+        LEFT JOIN Phong p ON dk.SoPhong = p.SoPhong
+        WHERE sv.MaSV LIKE %s OR sv.HoTen LIKE %s 
+        ORDER BY sv.MaSV LIMIT %s OFFSET %s
+    """
     params = (f"%{search}%", f"%{search}%", per_page, offset)
     cur.execute(sql, params)
     rows = cur.fetchall()
     
+    # Đếm tổng số dòng (giữ nguyên)
     cur.execute("SELECT COUNT(*) as total FROM SinhVien WHERE MaSV LIKE %s OR HoTen LIKE %s", (f"%{search}%", f"%{search}%"))
     total = cur.fetchone()['total']
+    
     cur.close()
     return rows, total
 

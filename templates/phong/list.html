@@ -1,38 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="d-flex justify-content-between mb-3">
-    <h3>Danh sách Phòng</h3>
-    <a href="{{ url_for('phong.them_p') }}" class="btn btn-success"><i class="fas fa-plus"></i> Thêm phòng</a>
+<div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+    <h4 class="fw-bold mb-0 text-dark"><i class="fas fa-door-open text-success me-2"></i> Quản lý Phòng Ở</h4>
+    <a href="{{ url_for('phong.them_p') }}" class="btn btn-primary"><i class="fas fa-plus-square me-2"></i> Thêm Phòng</a>
 </div>
 
-<table class="table table-bordered table-hover shadow-sm bg-white">
-    <thead class="table-dark">
-        <tr>
-            <th>Số Phòng</th>
-            <th>Loại Phòng</th>
-            <th>Đơn Giá (VNĐ)</th>
-            <th>Sức Chứa</th>
-            <th>Đang Ở</th>
-            <th>Trạng Thái</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in rows %}
-        <tr>
-            <td><strong>{{ r.SoPhong }}</strong></td>
-            <td>{{ r.LoaiPhong }}</td>
-            <td>{{ "{:,.0f}".format(r.DonGia) }}</td>
-            <td>{{ r.SoNguoiToiDa }}</td>
-            <td>{{ r.DangO }}</td>
-            <td>
-                {% if r.DangO >= r.SoNguoiToiDa %}
-                    <span class="badge bg-danger">Đã Đầy</span>
-                {% else %}
-                    <span class="badge bg-success">Còn Trống ({{ r.SoNguoiToiDa - r.DangO }})</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="row g-4">
+    {% for r in rows %}
+    <div class="col-md-6 animate__animated animate__fadeInUp" style="animation-delay: {{ loop.index * 0.1 }}s;">
+        <div class="card-custom p-4 card-hover">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h3 class="fw-bold text-primary mb-1"><i class="fas fa-key me-2"></i>{{ r.SoPhong }}</h3>
+                    <span class="text-muted fw-medium"><i class="fas fa-layer-group me-1"></i> {{ r.LoaiPhong }}</span>
+                </div>
+                <div class="text-end">
+                    <div class="fs-5 fw-bold text-dark">{{ "{:,.0f}".format(r.DonGia) }} <small class="text-muted fs-6">đ/tháng</small></div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="fw-bold text-muted small"><i class="fas fa-users me-1"></i> Sức chứa: {{ r.DangO }} / {{ r.SoNguoiToiDa }}</span>
+                    {% if r.DangO >= r.SoNguoiToiDa %}
+                        <span class="text-danger fw-bold small animate__animated animate__flash animate__infinite"><i class="fas fa-exclamation-circle"></i> Đã đầy</span>
+                    {% else %}
+                        <span class="text-success fw-bold small"><i class="fas fa-check-circle"></i> Còn trống</span>
+                    {% endif %}
+                </div>
+                <div class="progress" style="height: 12px; border-radius: 10px; background-color: #e2e8f0;">
+                    {% set percent = (r.DangO / r.SoNguoiToiDa * 100) | round %}
+                    <div class="progress-bar progress-bar-striped progress-bar-animated {{ 'bg-danger' if percent == 100 else 'bg-success' }}" role="progressbar" style="width: {{ percent }}%; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>In Thẻ Sinh Viên - {{ sv.MaSV }}</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f1f5f9; margin: 0; }
+        .card { width: 350px; height: 220px; background: white; border: 2px solid #0ea5e9; border-radius: 12px; padding: 20px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .header { text-align: center; color: #0ea5e9; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; font-size: 14px; }
+        .info { margin-bottom: 8px; font-size: 14px; }
+        .info strong { color: #334155; }
+        .avatar { width: 80px; height: 100px; background: #f8fafc; border: 1px dashed #94a3b8; position: absolute; right: 20px; top: 70px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #94a3b8; border-radius: 6px; }
+        .no-print { text-align: center; margin-top: 30px; }
+        .btn { padding: 12px 28px; background: #0ea5e9; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; box-shadow: 0 4px 12px rgba(14,165,233,0.3); }
+        .btn:hover { background: #0284c7; transform: translateY(-2px); }
+        @media print { 
+            body { background: white; }
+            .no-print { display: none; } 
+            .card { box-shadow: none; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="card">
+            <div class="header">THẺ SINH VIÊN KÝ TÚC XÁ</div>
+            <div class="info"><strong>Mã SV:</strong> {{ sv.MaSV }}</div>
+            <div class="info"><strong>Họ tên:</strong> {{ sv.HoTen }}</div>
+            <div class="info"><strong>Lớp:</strong> {{ sv.Lop or '—' }}</div>
+            <div class="info"><strong>Quê quán:</strong> {{ sv.QueQuan or '—' }}</div>
+            <div class="avatar">ẢNH 3x4</div>
+        </div>
+        <div class="no-print">
+            <button class="btn" onclick="window.print()">🖨️ Bấm để In</button>
+        </div>
+    </div>
+</body>
+</html>
