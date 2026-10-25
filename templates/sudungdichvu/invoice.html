@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .invoice-actions { max-width: 980px; margin: 0 auto 18px; }
+    .invoice-paper { max-width: 980px; margin: 0 auto; overflow: hidden; background: #fff; border: 1px solid #e6e9f2; border-radius: 24px; box-shadow: 0 18px 50px rgba(31,41,74,.09); }
+    .invoice-head { display: flex; justify-content: space-between; gap: 24px; padding: 34px 42px; color: #fff; background: linear-gradient(135deg, #161a3b 0%, #4548b9 100%); }
+    .invoice-brand { display: flex; align-items: center; gap: 13px; }
+    .invoice-logo { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 15px; color: #fff; background: rgba(255,255,255,.17); font-size: 1.25rem; }
+    .invoice-brand-name { font-size: 1.15rem; font-weight: 800; letter-spacing: .02em; }
+    .invoice-brand-subtitle { margin-top: 3px; color: #cdd0ff; font-size: .68rem; font-weight: 700; letter-spacing: .13em; }
+    .invoice-heading { text-align: right; }
+    .invoice-caption { color: #cdd0ff; font-size: .68rem; font-weight: 800; letter-spacing: .18em; }
+    .invoice-heading h1 { margin: 5px 0 4px; font-size: 1.55rem; font-weight: 800; letter-spacing: -.03em; }
+    .invoice-code { color: #e3e5ff; font-size: .78rem; }
+    .invoice-body { padding: 38px 42px 30px; }
+    .invoice-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding-bottom: 28px; border-bottom: 1px solid #edf0f6; }
+    .invoice-label { color: #8a91aa; font-size: .67rem; font-weight: 800; letter-spacing: .13em; }
+    .invoice-customer-name { margin: 8px 0 5px; color: #1a2140; font-size: 1.2rem; font-weight: 800; }
+    .invoice-meta p { margin: 3px 0; color: #69728d; font-size: .82rem; }
+    .invoice-meta-right { text-align: right; }
+    .invoice-table { width: 100%; margin-top: 30px; border-collapse: collapse; }
+    .invoice-table th { padding: 12px 10px; color: #8a91aa; background: #f8f9fd; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-align: left; text-transform: uppercase; }
+    .invoice-table td { padding: 16px 10px; color: #38405d; border-bottom: 1px solid #edf0f6; font-size: .84rem; }
+    .invoice-table th:first-child, .invoice-table td:first-child { padding-left: 14px; }
+    .invoice-table th:last-child, .invoice-table td:last-child { padding-right: 14px; text-align: right; }
+    .invoice-table .text-right { text-align: right; }
+    .invoice-service { color: #1d2543; font-weight: 800; }
+    .invoice-service-code { display: block; margin-top: 3px; color: #9aa1b7; font-size: .72rem; }
+    .invoice-summary { display: flex; justify-content: space-between; gap: 28px; align-items: flex-end; margin-top: 30px; }
+    .invoice-note { max-width: 52%; color: #8a91aa; font-size: .75rem; line-height: 1.7; }
+    .invoice-total-box { min-width: 270px; padding: 18px 20px; border-radius: 16px; background: #f0f1ff; }
+    .invoice-total-box span { display: block; color: #676bc0; font-size: .7rem; font-weight: 800; letter-spacing: .12em; }
+    .invoice-total-box strong { display: block; margin-top: 5px; color: #4548b9; font-size: 1.55rem; font-weight: 800; text-align: right; }
+    .invoice-foot { padding: 18px 42px; color: #8a91aa; background: #fafbfe; font-size: .74rem; text-align: center; }
+
+    @media (max-width: 680px) {
+        .invoice-head, .invoice-body { padding: 24px 20px; }
+        .invoice-head, .invoice-meta, .invoice-summary { display: block; }
+        .invoice-heading, .invoice-meta-right { margin-top: 22px; text-align: left; }
+        .invoice-note { max-width: none; margin-bottom: 20px; }
+        .invoice-total-box { min-width: 0; }
+        .invoice-table { min-width: 650px; }
+        .invoice-body { overflow-x: auto; }
+        .invoice-foot { padding: 16px 20px; }
+    }
+
+    @media print {
+        @page { size: A4; margin: 12mm; }
+        body { background: #fff !important; }
+        .sidebar, .topbar, .invoice-actions, .modal-backdrop { display: none !important; }
+        .main { margin: 0 !important; padding: 0 !important; min-height: 0 !important; }
+        .app-view { animation: none !important; }
+        .invoice-paper { max-width: none; border: 0; border-radius: 0; box-shadow: none; }
+        .invoice-head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .invoice-total-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+</style>
+
+<div class="invoice-actions d-flex justify-content-between align-items-center">
+    <a href="{{ url_for('sudungdichvu.index') }}" class="btn btn-light border">
+        <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+    </a>
+    <button type="button" class="btn btn-primary" onclick="window.print()">
+        <i class="fas fa-print me-2"></i>In / Lưu PDF
+    </button>
+</div>
+
+<article class="invoice-paper">
+    <header class="invoice-head">
+        <div class="invoice-brand">
+            <span class="invoice-logo"><i class="fas fa-bolt"></i></span>
+            <div>
+                <div class="invoice-brand-name">KTX MANAGER</div>
+                <div class="invoice-brand-subtitle">RESIDENCE OPERATIONS</div>
+            </div>
+        </div>
+        <div class="invoice-heading">
+            <div class="invoice-caption">SERVICE BILL</div>
+            <h1>HÓA ĐƠN DỊCH VỤ</h1>
+            <div class="invoice-code">{{ ma_hoa_don }}</div>
+        </div>
+    </header>
+
+    <div class="invoice-body">
+        <div class="invoice-meta">
+            <div>
+                <div class="invoice-label">THANH TOÁN CHO</div>
+                <div class="invoice-customer-name">{{ thong_tin.HoTen }}</div>
+                <p>Mã sinh viên: <strong>{{ thong_tin.MaSV }}</strong></p>
+                <p>Lớp: {{ thong_tin.Lop or 'Chưa cập nhật' }}</p>
+                <p>Số CMT/CCCD: {{ thong_tin.SoCMT or 'Chưa cập nhật' }}</p>
+            </div>
+            <div class="invoice-meta-right">
+                <div class="invoice-label">NGÀY LẬP HÓA ĐƠN</div>
+                <div class="invoice-customer-name">{{ ngay_in.strftime('%d/%m/%Y') }}</div>
+                <p>Hóa đơn tổng hợp các lượt sử dụng dịch vụ</p>
+            </div>
+        </div>
+
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th style="width: 7%;">#</th>
+                    <th>Dịch vụ</th>
+                    <th>Thời gian</th>
+                    <th class="text-right">SL</th>
+                    <th class="text-right">Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in chi_tiet %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        <span class="invoice-service">{{ r.TenDV }}</span>
+                        <span class="invoice-service-code">{{ r.MaDV }}</span>
+                    </td>
+                    <td>{{ r.ThoiGianSuDung.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td class="text-right">{{ r.SoLuong }}</td>
+                    <td class="text-right">{{ "{:,.0f}".format(r.DonGia) }} đ</td>
+                    <td class="text-right fw-bold">{{ "{:,.0f}".format(r.ThanhTien) }} đ</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="invoice-summary">
+            <div class="invoice-note">
+                <strong>Ghi chú</strong><br>
+                Hóa đơn được tạo từ dữ liệu sử dụng dịch vụ trong hệ thống quản lý ký túc xá.
+                Vui lòng kiểm tra lại thông tin trước khi xác nhận thanh toán.
+            </div>
+            <div class="invoice-total-box">
+                <span>TỔNG THANH TOÁN</span>
+                <strong>{{ "{:,.0f}".format(tong_tien) }} đ</strong>
+            </div>
+        </div>
+    </div>
+
+    <footer class="invoice-foot">
+        Cảm ơn bạn đã sử dụng dịch vụ của KTX Manager · Hóa đơn điện tử nội bộ
+    </footer>
+</article>
+
+{% endblock %}

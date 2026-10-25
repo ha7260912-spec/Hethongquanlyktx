@@ -23,5 +23,17 @@ def create_app():
     app.register_blueprint(dk_bp)
 
     # Người B sẽ đăng ký Blueprint của họ ở dưới này...
-    
+    from routes.dichvu_routes import dichvu_bp
+    app.register_blueprint(dichvu_bp)
+    from routes.sudungdichvu_routes import sudungdichvu_bp
+    app.register_blueprint(sudungdichvu_bp)
+    from routes.khach_routes import khach_bp
+    app.register_blueprint(khach_bp)
+    from routes.tham_routes import tham_bp
+    app.register_blueprint(tham_bp)
+    from routes.xe_routes import xe_bp
+    app.register_blueprint(xe_bp)
+    from routes.luotguixe_routes import luotguixe_bp
+    app.register_blueprint(luotguixe_bp)
+
     return app

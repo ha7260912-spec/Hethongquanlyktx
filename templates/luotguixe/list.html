@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="fas fa-square-parking text-primary me-2"></i>Quản lý Lượt gửi xe</h3>
+        <p class="text-muted mb-0">Theo dõi giờ vào, giờ ra và phí gửi xe</p>
+    </div>
+    <a href="{{ url_for('luotguixe.them') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Thêm lượt gửi
+    </a>
+</div>
+
+<div class="alert border-0 rounded-4 d-flex align-items-center gap-3 mb-4" style="background: linear-gradient(135deg, #eef0ff, #f7f8ff); color: #4c4ed0;">
+    <i class="fas fa-circle-info fs-5"></i>
+    <div><strong>Quy tắc tính phí:</strong> lượt đầu mỗi biển số trong ngày là <strong>3.000 đ</strong>, các lượt sau trong cùng ngày miễn phí; qua ngày mới cộng thêm <strong>3.000 đ</strong>.</div>
+</div>
+
+<div class="card card-custom p-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Mã lượt</th>
+                    <th>Biển số</th>
+                    <th>Sinh viên</th>
+                    <th>Giờ vào</th>
+                    <th>Giờ ra</th>
+                    <th>Phí gửi</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in danh_sach %}
+                <tr>
+                    <td>#{{ r.MaLuot }}</td>
+                    <td><span class="badge bg-light text-dark border fs-6">{{ r.BienSo }}</span></td>
+                    <td><strong>{{ r.HoTen }}</strong><div class="text-muted small">{{ r.MaSV }}</div></td>
+                    <td>{{ r.ThoiGianGui.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{{ r.ThoiGianLay.strftime('%d/%m/%Y %H:%M') if r.ThoiGianLay else 'Chưa lấy' }}</td>
+                    <td class="fw-bold text-success">{{ "{:,.0f}".format(r.SoTien or 0) }} đ</td>
+                    <td class="text-end">
+                        <a href="{{ url_for('luotguixe.sua', ma_luot=r.MaLuot) }}" class="btn btn-sm btn-outline-primary" title="Sửa"><i class="fas fa-pen"></i></a>
+                        <form method="POST" class="d-inline" action="{{ url_for('luotguixe.xoa', ma_luot=r.MaLuot) }}" onsubmit="return confirm('Xóa lượt gửi xe này?')">
+                            <button class="btn btn-sm btn-outline-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-4">Chưa có lượt gửi xe nào.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

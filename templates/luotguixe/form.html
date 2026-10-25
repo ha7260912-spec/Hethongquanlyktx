@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="fas fa-square-parking text-primary me-2"></i>{{ action }} lượt gửi xe</h3>
+        <p class="text-muted mb-0">Ghi nhận giờ vào, giờ ra và phí tự động theo ngày</p>
+    </div>
+    <a href="{{ url_for('luotguixe.index') }}" class="btn btn-light border">Quay lại</a>
+</div>
+
+<div class="card card-custom p-4">
+    <form method="POST">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Xe</label>
+                <select name="BienSo" class="form-select" required>
+                    <option value="">-- Chọn xe --</option>
+                    {% for x in xe_list %}
+                    <option value="{{ x.BienSo }}" {% if x.BienSo|string == luot.get('BienSo', '')|string %}selected{% endif %}>
+                        {{ x.BienSo }} - {{ x.MaSV }} - {{ x.HoTen }}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% if not xe_list %}<div class="form-text text-danger">Cần đăng ký xe trước.</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Giờ vào gửi xe</label>
+                {% set tg_gui = luot.get('ThoiGianGui', '') %}
+                <input type="datetime-local" name="ThoiGianGui" class="form-control"
+                       value="{{ tg_gui.strftime('%Y-%m-%dT%H:%M') if tg_gui and tg_gui.strftime is defined else tg_gui }}" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Giờ ra/lấy xe</label>
+                {% set tg_lay = luot.get('ThoiGianLay', '') %}
+                <input type="datetime-local" name="ThoiGianLay" class="form-control"
+                       value="{{ tg_lay.strftime('%Y-%m-%dT%H:%M') if tg_lay and tg_lay.strftime is defined else tg_lay }}">
+                <div class="form-text">Để trống nếu xe vẫn đang gửi.</div>
+            </div>
+        </div>
+        <div class="mt-4 p-3 rounded-4 border bg-light-subtle">
+            <div class="d-flex align-items-start gap-3">
+                <div class="d-flex align-items-center justify-content-center rounded-3 bg-primary-subtle text-primary" style="width: 42px; height: 42px;">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div>
+                    <div class="fw-bold text-dark">Phí gửi được tính tự động</div>
+                    <div class="small text-muted mt-1">
+                        Lượt đầu của một biển số trong ngày: <strong>3.000 đ</strong>.
+                        Các lượt tiếp theo trong cùng ngày: <strong>miễn phí</strong>.
+                        Mỗi ngày mới cộng thêm <strong>3.000 đ</strong>.
+                    </div>
+                    {% if action == 'Sửa' and luot.get('SoTien') is not none %}
+                    <div class="mt-2 text-primary fw-bold">Phí hiện tại: {{ "{:,.0f}".format(luot.get('SoTien') or 0) }} đ</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Lưu</button>
+            <a href="{{ url_for('luotguixe.index') }}" class="btn btn-secondary ms-2">Hủy</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

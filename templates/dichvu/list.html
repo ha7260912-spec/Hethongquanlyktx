@@ -1,0 +1,143 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Quản lý dịch vụ</h3>
+        <p class="text-muted mb-0">Quản lý danh sách và đơn giá dịch vụ KTX</p>
+    </div>
+</div>
+
+<!-- Form thêm dịch vụ -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0">
+            <i class="fas fa-plus-circle text-success me-2"></i>
+            Thêm dịch vụ mới
+        </h5>
+    </div>
+
+    <div class="card-body">
+        <form action="{{ url_for('dichvu.them') }}" method="POST">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Mã dịch vụ</label>
+                    <input type="text" name="ma_dv"
+                           class="form-control"
+                           placeholder="VD: DV04"
+                           maxlength="10" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Tên dịch vụ</label>
+                    <input type="text" name="ten_dv"
+                           class="form-control"
+                           placeholder="Nhập tên dịch vụ"
+                           maxlength="50" required>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Đơn giá (VNĐ)</label>
+                    <input type="number" name="don_gia"
+                           class="form-control"
+                           placeholder="15000"
+                           min="0" step="1" required>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-plus me-1"></i> Thêm
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Danh sách dịch vụ -->
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3 d-flex justify-content-between">
+        <h5 class="mb-0">
+            <i class="fas fa-list text-primary me-2"></i>
+            Danh sách dịch vụ
+        </h5>
+        <span class="badge bg-primary">
+            {{ danh_sach|length }} dịch vụ
+        </span>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th>Mã dịch vụ</th>
+                        <th>Tên dịch vụ</th>
+                        <th class="text-end">Đơn giá (VNĐ)</th>
+                        <th class="text-center" style="width: 190px;">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for dv in danh_sach %}
+                    <tr>
+                        <td class="text-center">{{ loop.index }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark border">
+                                {{ dv.MaDV }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <form id="edit-{{ loop.index }}"
+                                  action="{{ url_for('dichvu.sua', ma_dv=dv.MaDV) }}"
+                                  method="POST">
+                                <input type="text" name="ten_dv"
+                                       class="form-control form-control-sm"
+                                       value="{{ dv.TenDV }}"
+                                       maxlength="50" required>
+                                <input type="number" name="don_gia"
+                                       class="form-control form-control-sm mt-2"
+                                       value="{{ dv.DonGia }}"
+                                       min="0" step="1" required>
+                            </form>
+                        </td>
+
+                        <td class="text-end fw-semibold text-primary">
+                            {{ "{:,.0f}".format(dv.DonGia) }}
+                        </td>
+
+                        <td class="text-center">
+                            <button type="submit"
+                                    form="edit-{{ loop.index }}"
+                                    class="btn btn-sm btn-warning mb-1">
+                                <i class="fas fa-save me-1"></i> Lưu sửa
+                            </button>
+
+                            <form action="{{ url_for('dichvu.xoa', ma_dv=dv.MaDV) }}"
+                                  method="POST" class="d-inline"
+                                  onsubmit="return confirm('Bố có chắc muốn xóa dịch vụ này?')">
+                                <button type="submit"
+                                        class="btn btn-sm btn-danger mb-1">
+                                    <i class="fas fa-trash me-1"></i> Xóa
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                            Chưa có dịch vụ nào trong hệ thống.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

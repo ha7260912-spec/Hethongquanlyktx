@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-end gap-3 mb-4">
+    <div>
+        <div class="page-kicker mb-2"><i class="fas fa-sparkles me-2"></i>Operations · Services</div>
+        <h1 class="page-title mb-2">Sử dụng dịch vụ</h1>
+        <p class="text-muted mb-0">Theo dõi lượt dùng, chi phí và hoạt động dịch vụ trong ký túc xá.</p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalThem">
+        <i class="fas fa-plus me-2"></i>Ghi nhận sử dụng
+    </button>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+            <div class="stat-label">Tổng lượt dùng</div>
+            <div class="stat-value">{{ danh_sach|length }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+            <div class="stat-label">Tổng số lượng</div>
+            <div class="stat-value">{{ danh_sach|sum(attribute='SoLuong') }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+            <div class="stat-label">Doanh thu ghi nhận</div>
+            <div class="stat-value">{{ "{:,.0f}".format(danh_sach|sum(attribute='ThanhTien')) }} đ</div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-concierge-bell"></i></div>
+            <div class="stat-label">Dịch vụ đang có</div>
+            <div class="stat-value">{{ dich_vu|length }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-custom overflow-hidden">
+    <div class="toolbar">
+        <div>
+            <div class="fw-bold fs-5">Lịch sử sử dụng</div>
+            <div class="text-muted small">Danh sách giao dịch dịch vụ mới nhất</div>
+        </div>
+        <div class="input-group toolbar-search">
+            <span class="input-group-text bg-transparent border-end-0"><i class="fas fa-search text-muted"></i></span>
+            <input id="usageSearch" type="search" class="form-control border-start-0" placeholder="Tìm sinh viên hoặc dịch vụ..." autocomplete="off">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Mã SD</th>
+                    <th>Sinh viên</th>
+                    <th>Dịch vụ</th>
+                    <th>Thời gian</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in danh_sach %}
+                <tr data-usage-row>
+                    <td>#{{ r.MaSD }}</td>
+                    <td>
+                        <strong>{{ r.HoTen }}</strong>
+                        <div class="text-muted small">{{ r.MaSV }}</div>
+                    </td>
+                    <td>{{ r.TenDV }}</td>
+                    <td>{{ r.ThoiGianSuDung.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{{ r.SoLuong }}</td>
+                    <td>{{ "{:,.0f}".format(r.DonGia) }} đ</td>
+                    <td class="fw-bold text-success">
+                        {{ "{:,.0f}".format(r.ThanhTien) }} đ
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-success"
+                           href="{{ url_for('sudungdichvu.hoa_don', ma_sv=r.MaSV) }}"
+                           target="_blank" title="Xuất hóa đơn cho {{ r.HoTen }}">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </a>
+                        <button class="btn btn-sm btn-outline-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#modalSua{{ r.MaSD }}">
+                            <i class="fas fa-pen"></i>
+                        </button>
+
+                        <form method="POST"
+                              action="{{ url_for('sudungdichvu.xoa', ma_sd=r.MaSD) }}"
+                              class="d-inline"
+                              onsubmit="return confirm('Xóa lượt sử dụng này?')">
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        Chưa có lượt sử dụng dịch vụ nào.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal thêm -->
+<div class="modal fade" id="modalThem" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content service-modal">
+            <form method="POST" action="{{ url_for('sudungdichvu.them') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Thêm lượt sử dụng</h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Sinh viên</label>
+                        <select name="ma_sv" class="form-select" required>
+                            <option value="">-- Chọn sinh viên --</option>
+                            {% for sv in sinh_vien %}
+                            <option value="{{ sv.MaSV }}">
+                                {{ sv.MaSV }} - {{ sv.HoTen }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="field-label" for="serviceSearchThem">Dịch vụ</label>
+                        <div class="service-picker" data-service-picker>
+                            <input id="serviceSearchThem" type="search" class="form-control service-search"
+                                   placeholder="Tìm theo mã hoặc tên dịch vụ..." autocomplete="off">
+                            <input type="hidden" name="ma_dv" class="service-value">
+                            <div class="service-picker-menu">
+                                {% for dv in dich_vu %}
+                                <button type="button" class="service-option"
+                                        data-value="{{ dv.MaDV }}"
+                                        data-label="{{ dv.MaDV }} — {{ dv.TenDV }}">
+                                    <span><strong>{{ dv.TenDV }}</strong><small>{{ dv.MaDV }}</small></span>
+                                    <b>{{ "{:,.0f}".format(dv.DonGia) }} đ</b>
+                                </button>
+                                {% else %}
+                                <div class="service-empty">Chưa có dịch vụ nào.</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="form-text">Gõ từ khóa để lọc nhanh danh sách dịch vụ.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Thời gian sử dụng</label>
+                        <input type="datetime-local" name="thoi_gian"
+                               class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số lượng</label>
+                        <input type="number" name="so_luong"
+                               class="form-control" min="1"
+                               value="1" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">
+                        Thêm mới
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal sửa từng bản ghi -->
+{% for r in danh_sach %}
+<div class="modal fade" id="modalSua{{ r.MaSD }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content service-modal">
+            <form method="POST"
+                  action="{{ url_for('sudungdichvu.sua', ma_sd=r.MaSD) }}">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        Sửa lượt sử dụng #{{ r.MaSD }}
+                    </h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Sinh viên</label>
+                        <select name="ma_sv" class="form-select" required>
+                            {% for sv in sinh_vien %}
+                            <option value="{{ sv.MaSV }}"
+                                {% if sv.MaSV == r.MaSV %}selected{% endif %}>
+                                {{ sv.MaSV }} - {{ sv.HoTen }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="field-label" for="serviceSearchSua{{ r.MaSD }}">Dịch vụ</label>
+                        <div class="service-picker" data-service-picker>
+                            <input id="serviceSearchSua{{ r.MaSD }}" type="search" class="form-control service-search"
+                                   value="{{ r.MaDV }} — {{ r.TenDV }}" autocomplete="off">
+                            <input type="hidden" name="ma_dv" class="service-value" value="{{ r.MaDV }}">
+                            <div class="service-picker-menu">
+                                {% for dv in dich_vu %}
+                                <button type="button" class="service-option"
+                                        data-value="{{ dv.MaDV }}"
+                                        data-label="{{ dv.MaDV }} — {{ dv.TenDV }}">
+                                    <span><strong>{{ dv.TenDV }}</strong><small>{{ dv.MaDV }}</small></span>
+                                    <b>{{ "{:,.0f}".format(dv.DonGia) }} đ</b>
+                                </button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="form-text">Gõ từ khóa để đổi dịch vụ.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Thời gian</label>
+                        <input type="datetime-local" name="thoi_gian"
+                               class="form-control"
+                               value="{{ r.ThoiGianSuDung.strftime('%Y-%m-%dT%H:%M') }}"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số lượng</label>
+                        <input type="number" name="so_luong"
+                               class="form-control" min="1"
+                               value="{{ r.SoLuong }}" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">
+                        Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<style>
+    .page-kicker i { animation: sparklePulse 1.8s ease-in-out infinite; }
+    @keyframes sparklePulse { 0%, 100% { transform: scale(1) rotate(0); opacity: .75; } 50% { transform: scale(1.18) rotate(12deg); opacity: 1; } }
+    .row.g-3.mb-4 > div:nth-child(1) .stat-card { animation: cardReveal .45s .05s both; }
+    .row.g-3.mb-4 > div:nth-child(2) .stat-card { animation: cardReveal .45s .12s both; }
+    .row.g-3.mb-4 > div:nth-child(3) .stat-card { animation: cardReveal .45s .19s both; }
+    .row.g-3.mb-4 > div:nth-child(4) .stat-card { animation: cardReveal .45s .26s both; }
+    @keyframes cardReveal { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .service-modal .modal-header { color: #fff; background: linear-gradient(135deg, #171b40, #565bd9); border-bottom: 0; }
+    .service-modal .modal-title { color: #fff; }
+    .service-modal .btn-close { filter: invert(1); opacity: .82; }
+    .service-modal .modal-footer { background: #fbfbfe; }
+    .service-picker { position: relative; }
+    .service-search { padding-right: 42px; border-radius: 12px; }
+    .service-search:focus { border-color: #9b9ef7; box-shadow: 0 0 0 .2rem rgba(91,92,226,.12); }
+    .service-picker-menu { display: none; max-height: 230px; overflow-y: auto; margin-top: 8px; padding: 6px; border: 1px solid #e3e6f1; border-radius: 14px; background: #fff; box-shadow: 0 12px 28px rgba(31,41,74,.12); }
+    .service-picker.is-open .service-picker-menu { display: block; }
+    .service-option { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; color: #252b45; text-align: left; }
+    .service-option:hover { background: #f0f1ff; color: #4c4ed0; }
+    .service-option span { display: flex; flex-direction: column; gap: 2px; }
+    .service-option small { color: #8a91aa; font-size: .72rem; }
+    .service-option b { color: #5b5ce2; font-size: .78rem; white-space: nowrap; }
+    .service-empty { padding: 14px 12px; color: #8a91aa; font-size: .82rem; text-align: center; }
+    .service-search.is-invalid { border-color: #dc3545; }
+    .usage-row-hidden { display: none; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[data-service-picker]').forEach(function (picker) {
+            const search = picker.querySelector('.service-search');
+            const hidden = picker.querySelector('.service-value');
+            const options = Array.from(picker.querySelectorAll('.service-option'));
+            const menu = picker.querySelector('.service-picker-menu');
+            const empty = document.createElement('div');
+            empty.className = 'service-empty service-filter-empty';
+            empty.textContent = 'Không tìm thấy dịch vụ phù hợp.';
+            empty.hidden = true;
+            menu.appendChild(empty);
+
+            function filterOptions() {
+                const query = search.value.trim().toLowerCase();
+                let visible = 0;
+                options.forEach(function (option) {
+                    const match = (option.dataset.label + ' ' + option.textContent).toLowerCase().includes(query);
+                    option.hidden = !match;
+                    if (match) visible += 1;
+                });
+                empty.hidden = visible !== 0;
+            }
+
+            function openPicker() {
+                picker.classList.add('is-open');
+                filterOptions();
+            }
+
+            search.addEventListener('focus', openPicker);
+            search.addEventListener('input', function () {
+                hidden.value = '';
+                search.classList.remove('is-invalid');
+                openPicker();
+            });
+
+            options.forEach(function (option) {
+                option.addEventListener('click', function () {
+                    hidden.value = option.dataset.value;
+                    search.value = option.dataset.label;
+                    search.classList.remove('is-invalid');
+                    picker.classList.remove('is-open');
+                });
+            });
+
+            const form = picker.closest('form');
+            form.addEventListener('submit', function (event) {
+                if (!hidden.value) {
+                    event.preventDefault();
+                    search.classList.add('is-invalid');
+                    openPicker();
+                    search.focus();
+                }
+            });
+        });
+
+        document.addEventListener('click', function (event) {
+            document.querySelectorAll('[data-service-picker].is-open').forEach(function (picker) {
+                if (!picker.contains(event.target)) picker.classList.remove('is-open');
+            });
+        });
+
+        const search = document.getElementById('usageSearch');
+        if (search) {
+            search.addEventListener('input', function () {
+                const query = search.value.trim().toLowerCase();
+                document.querySelectorAll('[data-usage-row]').forEach(function (row) {
+                    row.classList.toggle('usage-row-hidden', !row.textContent.toLowerCase().includes(query));
+                });
+            });
+        }
+    });
+</script>
+
+{% endblock %}
