@@ -1,156 +1,76 @@
 {% extends "base.html" %}
+{% block container_class %}container-fluid p-0{% endblock %}
 {% block content %}
 <style>
-    /* Reset để trang login tràn viền màn hình */
-    body { background-color: #f8fafc; overflow: hidden; }
-    .login-container { height: 100vh; margin: 0; }
-    
-    /* BÊN TRÁI: Hình ảnh & Giới thiệu */
-    .login-left {
+    /* Nền ảnh ký túc xá tràn viền */
+    .login-wrapper {
         background: url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;
-        position: relative;
-        color: white;
+        position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center;
     }
-    /* Lớp phủ Gradient Xanh dương */
-    .login-left::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(14, 165, 233, 0.7) 100%);
-        z-index: 1;
+    /* Lớp phủ tối để nổi bật form */
+    .login-wrapper::before {
+        content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65);
     }
-    .login-left-content {
-        position: relative;
-        z-index: 2;
-        padding: 60px;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+    /* Hộp đăng nhập */
+    .login-box {
+        position: relative; z-index: 1; background: white; padding: 40px; border-radius: 12px;
+        width: 100%; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
-    .feature-item { display: flex; align-items: center; margin-bottom: 20px; font-size: 1.1rem; font-weight: 500; }
-    .feature-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 1.2rem; color: #38bdf8; }
-
-    /* BÊN PHẢI: Form Đăng nhập */
-    .login-right {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        background: #ffffff;
-        box-shadow: -10px 0 30px rgba(0,0,0,0.05);
-        z-index: 3;
+    /* Tiêu đề lớn */
+    .login-title {
+        text-align: center; font-size: 2.5rem; font-weight: 900; color: white; position: absolute;
+        top: 12%; width: 100%; z-index: 1; text-transform: uppercase; text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        letter-spacing: 2px;
     }
-    .form-wrapper { width: 100%; max-width: 400px; padding: 20px; }
+    /* Nút đăng nhập đỏ */
+    .btn-red { background-color: #e74c3c; color: white; font-weight: bold; border: none; transition: 0.3s; }
+    .btn-red:hover { background-color: #c0392b; color: white; transform: translateY(-2px); }
     
-    /* Input hiện đại (Đổi viền sang màu Xanh) */
-    .input-group-custom {
-        background: #f8fafc;
-        border: 2px solid #e2e8f0;
-        border-radius: 14px;
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-    .input-group-custom:focus-within {
-        border-color: #0ea5e9;
-        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
-        background: #ffffff;
-    }
-    .input-group-text-custom { background: transparent; border: none; color: #94a3b8; padding-left: 15px; }
-    .form-control-custom { background: transparent; border: none; padding: 15px; font-weight: 500; }
-    .form-control-custom:focus { box-shadow: none; background: transparent; }
-    
-    /* Nút Đăng nhập Xanh dương */
-    .btn-login {
-        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-        border: none; border-radius: 14px; padding: 15px;
-        font-weight: 700; font-size: 1.1rem; color: white;
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
-    }
-    .btn-login:hover { 
-        transform: translateY(-3px); 
-        box-shadow: 0 15px 25px rgba(14, 165, 233, 0.5); 
-        color: white;
-    }
+    /* Ô input */
+    .input-group-text { background-color: white; border-right: none; }
+    .form-control { border-left: none; }
+    .form-control:focus { box-shadow: none; border-color: #ced4da; }
 </style>
 
-<div class="row login-container m-0">
-    <!-- BÊN TRÁI: ẢNH VÀ THÔNG TIN -->
-    <div class="col-lg-7 d-none d-lg-block login-left animate__animated animate__fadeInLeft">
-        <div class="login-left-content">
-            <div class="mb-5">
-                <div class="d-inline-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle mb-4" style="width: 70px; height: 70px;">
-                    <i class="fas fa-building fa-2x text-white"></i>
-                </div>
-                <h1 class="display-4 fw-bold mb-3">KTX Smart System</h1>
-                <p class="lead text-light opacity-75" style="max-width: 500px;">
-                    Nền tảng quản lý ký túc xá hiện đại, giúp việc quản lý sinh viên và phòng ở trở nên dễ dàng và chuyên nghiệp hơn bao giờ hết.
-                </p>
-            </div>
-            
-            <!-- Các tính năng nổi bật -->
-            <div class="mt-4">
-                <div class="feature-item animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
-                    <div class="feature-icon"><i class="fas fa-users"></i></div>
-                    <div>Quản lý hồ sơ sinh viên tập trung</div>
-                </div>
-                <div class="feature-item animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
-                    <div class="feature-icon"><i class="fas fa-door-open"></i></div>
-                    <div>Theo dõi tình trạng phòng ở trực quan</div>
-                </div>
-                <div class="feature-item animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
-                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                    <div>Bảo mật và phân quyền chặt chẽ</div>
-                </div>
-            </div>
+<h1 class="login-title d-none d-md-block">KÝ TÚC XÁ SINH VIÊN</h1>
+
+<div class="login-wrapper">
+    <div class="login-box">
+        <div class="text-center mb-4 d-md-none">
+            <h3 class="fw-bold text-uppercase" style="color: #007bb5;">KÝ TÚC XÁ</h3>
         </div>
-    </div>
-
-    <!-- BÊN PHẢI: FORM ĐĂNG NHẬP -->
-    <div class="col-lg-5 login-right animate__animated animate__fadeInRight">
-        <div class="form-wrapper">
-            <div class="text-center mb-5 d-lg-none">
-                <!-- Logo cho màn hình điện thoại -->
-                <i class="fas fa-building fa-3x text-primary mb-3"></i>
-                <h3 class="fw-bold">KTX SYSTEM</h3>
+        
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label fw-bold text-muted small">TÊN ĐĂNG NHẬP</label>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text"><i class="fas fa-user text-muted"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Nhập tài khoản..." required autofocus>
+                </div>
             </div>
             
-            <div class="mb-5">
-                <h2 class="fw-bold text-dark mb-2">Đăng nhập 🔐</h2>
-                <p class="text-muted">Vui lòng nhập tài khoản để tiếp tục quản lý.</p>
+            <div class="mb-3">
+                <label class="form-label fw-bold text-muted small">MẬT KHẨU</label>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text"><i class="fas fa-lock text-muted"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu..." required>
+                </div>
             </div>
-
-            <form method="post">
-                <div class="mb-4">
-                    <label class="form-label text-muted fw-bold small">TÊN ĐĂNG NHẬP</label>
-                    <div class="input-group input-group-custom">
-                        <span class="input-group-text input-group-text-custom"><i class="fas fa-user"></i></span>
-                        <input type="text" name="username" class="form-control form-control-custom" required autofocus placeholder="Nhập tài khoản...">
-                    </div>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label text-muted fw-bold small">MẬT KHẨU</label>
-                    <div class="input-group input-group-custom">
-                        <span class="input-group-text input-group-text-custom"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password" class="form-control form-control-custom" required placeholder="Nhập mật khẩu...">
-                    </div>
-                </div>
-
-                <!-- Các tính năng phụ trợ -->
-                <div class="d-flex justify-content-between align-items-center mb-5">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="rememberMe">
-                        <label class="form-check-label text-muted fw-medium small" for="rememberMe">Ghi nhớ đăng nhập</label>
-                    </div>
-                    <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none fw-bold small" style="color: #0ea5e9;">Quên mật khẩu?</a>
-                </div>
-
-                <button type="submit" class="btn btn-login w-100">
-                    Đăng Nhập <i class="fas fa-arrow-right ms-2"></i>
-                </button>
-            </form>
+            
+            <div class="d-flex justify-content-end mb-4">
+                <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none small fw-bold text-primary">Quên mật khẩu?</a>
+            </div>
+            
+            <button type="submit" class="btn btn-red w-100 py-3 fs-5 rounded-3">Đăng nhập</button>
+        </form>
+        
+        <!-- ĐÃ XÓA DEMO VÀ THÊM NÚT ĐĂNG KÝ -->
+        <hr class="my-4 text-muted">
+        <div class="text-center">
+            <span class="text-muted">Chưa có tài khoản sinh viên?</span> <br>
+            <a href="{{ url_for('auth.sinhvien_register') }}" class="text-decoration-none fw-bold fs-5 text-primary mt-2 d-inline-block">
+                <i class="fas fa-user-plus me-1"></i> Đăng ký ngay
+            </a>
         </div>
     </div>
 </div>

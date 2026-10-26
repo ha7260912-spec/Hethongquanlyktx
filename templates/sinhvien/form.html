@@ -2,52 +2,49 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="d-flex align-items-center mb-4">
-            <a href="{{ url_for('sinhvien.list_sv') }}" class="btn btn-light border btn-icon me-3"><i class="fas fa-arrow-left"></i></a>
-            <h4 class="fw-bold mb-0">{{ action }} Sinh Viên</h4>
-        </div>
-        
-        <div class="card-custom p-4">
-            <form method="post">
-                <!-- NHÓM 1: THÔNG TIN CÁ NHÂN -->
-                <h6 class="text-primary fw-bold mb-3 border-bottom pb-2"><i class="fas fa-user-circle me-2"></i>Thông tin cá nhân</h6>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-muted small">HỌ VÀ TÊN <span class="text-danger">*</span></label>
-                        <input type="text" name="HoTen" class="form-control bg-light border-0" value="{{ sv.HoTen if sv else '' }}" required>
+        <div class="card border-dark mb-4">
+            <div class="card-header bg-white border-bottom border-dark py-3">
+                <h5 class="mb-0 fw-bold text-uppercase">{{ action }} Hồ sơ Sinh viên</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Mã Sinh Viên <span class="text-danger">*</span></label>
+                            <input type="text" name="MaSV" class="form-control" value="{{ sv.MaSV if sv else '' }}" {{ 'readonly' if action == 'Sửa' }} required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Số CMT / CCCD <span class="text-danger">*</span></label>
+                            <input type="text" name="SoCMT" class="form-control" value="{{ sv.SoCMT if sv else '' }}" required>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-muted small">SỐ CMT / CCCD <span class="text-danger">*</span></label>
-                        <input type="text" name="SoCMT" class="form-control bg-light border-0" value="{{ sv.SoCMT if sv else '' }}" required>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Họ và Tên <span class="text-danger">*</span></label>
+                        <input type="text" name="HoTen" class="form-control" value="{{ sv.HoTen if sv else '' }}" required>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-muted small">NGÀY SINH</label>
-                        <input type="date" name="NgaySinh" class="form-control bg-light border-0" value="{{ sv.NgaySinh if sv and sv.NgaySinh else '' }}">
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Ngày sinh</label>
+                            <input type="date" name="NgaySinh" class="form-control" value="{{ sv.NgaySinh if sv and sv.NgaySinh else '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Lớp</label>
+                            <input type="text" name="Lop" class="form-control" value="{{ sv.Lop if sv else '' }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Quê quán</label>
+                            <input type="text" name="QueQuan" class="form-control" value="{{ sv.QueQuan if sv else '' }}">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-muted small">QUÊ QUÁN</label>
-                        <input type="text" name="QueQuan" class="form-control bg-light border-0" value="{{ sv.QueQuan if sv else '' }}">
+                    
+                    <div class="border-top pt-3 text-end">
+                        <a href="{{ url_for('sinhvien.list_sv') }}" class="btn btn-secondary me-2">Quay lại</a>
+                        <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-1"></i> Lưu hồ sơ</button>
                     </div>
-                </div>
-
-                <!-- NHÓM 2: THÔNG TIN HỌC TẬP -->
-                <h6 class="text-primary fw-bold mb-3 border-bottom pb-2"><i class="fas fa-graduation-cap me-2"></i>Thông tin học tập</h6>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-muted small">MÃ SINH VIÊN <span class="text-danger">*</span></label>
-                        <input type="text" name="MaSV" class="form-control bg-light border-0" value="{{ sv.MaSV if sv else '' }}" {{ 'readonly' if action == 'Sửa' }} required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold text-muted small">LỚP</label>
-                        <input type="text" name="Lop" class="form-control bg-light border-0" value="{{ sv.Lop if sv else '' }}">
-                    </div>
-                </div>
-                
-                <div class="text-end mt-4 pt-3 border-top">
-                    <a href="{{ url_for('sinhvien.list_sv') }}" class="btn btn-light px-4 me-2">Hủy bỏ</a>
-                    <button class="btn btn-primary px-5"><i class="fas fa-save me-2"></i> Lưu dữ liệu</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>

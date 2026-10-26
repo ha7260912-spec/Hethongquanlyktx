@@ -1,30 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
-<h3>Thêm Phòng Mới</h3>
-<div class="card shadow-sm col-md-6">
-    <div class="card-body">
-        <form method="post">
-            <div class="mb-3">
-                <label>Số phòng (*)</label>
-                <input type="text" name="SoPhong" class="form-control" required placeholder="VD: P105">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm" style="border-radius: 12px;">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="mb-0 fw-bold">{{ action }} Phòng</h5>
             </div>
-            <div class="mb-3">
-                <label>Loại phòng</label>
-                <input type="text" name="LoaiPhong" class="form-control" placeholder="VD: Phòng 4 người">
+            <div class="card-body p-4">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Số Phòng <span class="text-danger">*</span></label>
+                        <input type="text" name="SoPhong" class="form-control" 
+                               value="{{ p.SoPhong if p else '' }}" {{ 'readonly' if action == 'Sửa' }} required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Loại Phòng</label>
+                        <input type="text" name="LoaiPhong" class="form-control" value="{{ p.LoaiPhong if p else '' }}">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Đơn Giá (VNĐ) <span class="text-danger">*</span></label>
+                            <input type="number" name="DonGia" class="form-control" value="{{ p.DonGia if p else 500000 }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Số Người Tối Đa <span class="text-danger">*</span></label>
+                            <input type="number" name="SoNguoiToiDa" class="form-control" value="{{ p.SoNguoiToiDa if p else 4 }}" required>
+                        </div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <a href="{{ url_for('phong.list_p') }}" class="btn btn-light border me-2">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary px-4">Lưu lại</button>
+                    </div>
+                </form>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label>Đơn giá / Tháng (*)</label>
-                    <input type="number" name="DonGia" class="form-control" required value="500000">
-                </div>
-                <div class="col-md-6">
-                    <label>Số người tối đa (*)</label>
-                    <input type="number" name="SoNguoiToiDa" class="form-control" required value="4">
-                </div>
-            </div>
-            <button class="btn btn-primary">Thêm Phòng</button>
-            <a href="{{ url_for('phong.list_p') }}" class="btn btn-secondary">Hủy</a>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

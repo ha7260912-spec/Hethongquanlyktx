@@ -1,13 +1,16 @@
-from flask import Blueprint, render_template
-from routes.auth_routes import login_required, admin_required  # <-- Đã thêm admin_required
+from flask import Blueprint, render_template, redirect, url_for, session
+from routes.auth_routes import login_required  # Chỉ cần login_required, không dùng admin_required
 from database.connection import get_db
 
 bp = Blueprint("main", __name__)
 
 @bp.route("/")
 @login_required
-@admin_required  # <-- CHẶN LỄ TÂN TẠI ĐÂY
 def index():
+    # Nếu là sinh viên thì đá về Cổng sinh viên, không cho vào Dashboard của Admin
+    if session.get("role") == 'sinhvien':
+        return redirect(url_for("sinhvien.portal"))
+
     try:
         db = get_db()
         cur = db.cursor(dictionary=True)

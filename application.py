@@ -36,4 +36,8 @@ def create_app():
     from routes.luotguixe_routes import luotguixe_bp
     app.register_blueprint(luotguixe_bp)
 
+<<<<<<< Updated upstream
     return app
+=======
+    return app
+>>>>>>> Stashed changes

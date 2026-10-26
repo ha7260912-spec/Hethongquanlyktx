@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KTX Manager - Admin Panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <title>{% block title %}KTX SMART - Quản lý ký túc xá{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
+<<<<<<< Updated upstream
             --primary: #5b5ce2;
             --primary-hover: #4547c8;
             --sidebar-bg: #11152d;
@@ -118,10 +121,192 @@
            khiến backdrop phủ sai và modal có thể bị khuất trên màn hình thấp. */
         .app-view { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+=======
+            --navy: #163B65;
+            --navy-dark: #102D4D;
+            --blue: #2563eb;
+            --page-bg: #F4F7FB;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #E5EAF1;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--page-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* THANH ĐIỀU HƯỚNG */
+        .navbar-custom {
+            background: var(--navy);
+            padding: 12px 0;
+            box-shadow: 0 3px 14px rgba(16, 45, 77, 0.12);
+        }
+
+        .navbar-brand {
+            color: #fff !important;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+        }
+
+        .brand-highlight { color: #BFDBFE; }
+
+        .navbar-custom .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+        .navbar-custom .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.15);
+        }
+        .navbar-custom .navbar-toggler-icon { filter: invert(1); }
+
+        .navbar-custom .nav-link {
+            color: #DCE7F5 !important;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 10px 13px !important;
+            margin: 0 2px;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .navbar-custom .nav-link:hover,
+        .navbar-custom .nav-link.active {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .user-label {
+            color: #fff;
+            font-size: 0.88rem;
+            white-space: nowrap;
+        }
+
+        .btn-logout {
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 8px;
+            padding: 7px 13px;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .btn-logout:hover {
+            color: var(--navy);
+            background: #fff;
+            border-color: #fff;
+        }
+
+        /* KHU VỰC NỘI DUNG */
+        .main-container {
+            width: 100%;
+            max-width: 1440px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 28px 24px 36px;
+        }
+
+        /* THẺ VÀ BẢNG DỮ LIỆU */
+        .card {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(15, 23, 42, 0.035);
+        }
+
+        .table { --bs-table-bg: transparent; margin-bottom: 0; }
+
+        .table thead th {
+            background: #F1F5F9;
+            color: #475569;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.35px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            color: #334155;
+            padding: 15px 16px;
+            border-color: #EDF1F6;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover > * {
+            --bs-table-bg-state: #F8FAFC;
+        }
+
+        /* NÚT */
+        .btn-primary { background: var(--navy); border-color: var(--navy); border-radius: 9px; }
+        .btn-primary:hover { background: var(--navy-dark); border-color: var(--navy-dark); }
+        .btn-blue { background: var(--blue); color: #fff; border: none; border-radius: 8px; padding: 8px 15px; }
+        .btn-blue:hover { background: #1D4ED8; color: #fff; }
+        .btn-red { background: #DC2626; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-weight: 600; }
+        .btn-red:hover { background: #B91C1C; color: #fff; }
+
+        /* THÔNG BÁO */
+        .alert { border: none; border-radius: 10px; }
+
+        /* CHÂN TRANG */
+        .footer {
+            margin-top: auto;
+            background: #fff;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .footer-main { padding: 30px 0 20px; }
+
+        .footer h5 { color: var(--navy); font-weight: 700; font-size: 1rem; margin-bottom: 14px; }
+        .footer p { font-size: 0.88rem; line-height: 1.8; margin-bottom: 8px; }
+        .footer a { color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .footer a:hover { color: var(--blue); }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding: 14px 0;
+            text-align: center;
+            font-size: 0.82rem;
+            color: #94A3B8;
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-custom .navbar-nav { align-items: stretch !important; padding-top: 12px; }
+            .navbar-custom .nav-link { margin: 2px 0; }
+            .navbar-custom .nav-item.ms-4, .navbar-custom .nav-item.ms-3 { margin-left: 0 !important; margin-top: 8px; }
+            .main-container { padding: 22px 16px 30px; }
+        }
+
+        @media (max-width: 575.98px) {
+            .main-container { padding: 18px 12px 24px; }
+        }
+>>>>>>> Stashed changes
     </style>
+
+    {% block extra_head %}{% endblock %}
 </head>
-<body>
+
+<body class="d-flex flex-column min-vh-100">
+
     {% if session.user %}
+<<<<<<< Updated upstream
     <div class="sidebar">
         <div class="brand">
             <span class="brand-mark"><i class="fas fa-bolt"></i></span>
@@ -136,15 +321,23 @@
             {% if session.role == 'admin' %}
             <li><a href="{{ url_for('main.index') }}" class="{{ 'active' if request.path == '/' }}"><i class="fas fa-chart-pie"></i> Tổng quan</a></li>
             {% endif %}
+=======
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container-fluid px-lg-4">
+>>>>>>> Stashed changes
 
-            <!-- 2. SINH VIÊN (Cả 2 đều thấy) -->
-            <li><a href="{{ url_for('sinhvien.list_sv') }}" class="{{ 'active' if request.path.startswith('/sinhvien') }}"><i class="fas fa-users"></i> Sinh Viên</a></li>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('main.index') }}">
+                <span class="brand-icon">
+                    <i class="fas fa-building"></i>
+                </span>
+                <span>KTX <span class="brand-highlight">SMART</span></span>
+            </a>
 
-            <!-- 3. QUẢN LÝ PHÒNG (Chỉ Admin) -->
-            {% if session.role == 'admin' %}
-            <li><a href="{{ url_for('phong.list_p') }}" class="{{ 'active' if request.path.startswith('/phong') }}"><i class="fas fa-door-open"></i> Quản lý Phòng</a></li>
-            {% endif %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Mở menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
+<<<<<<< Updated upstream
             <!-- 4. ĐĂNG KÝ PHÒNG (Cả 2 đều thấy) -->
             <li><a href="{{ url_for('dangkyphong.list_dk') }}" class="{{ 'active' if request.path.startswith('/dangkyphong') }}"><i class="fas fa-file-signature"></i> Đăng Ký Phòng</a></li>
             
@@ -178,58 +371,106 @@
             <li><a href="{{ url_for('auth.logout') }}" class="text-danger"><i class="fas fa-power-off"></i> Đăng xuất</a></li>
         </ul>
     </div>
+=======
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+>>>>>>> Stashed changes
 
-    <div class="main">
-        <!-- TOPBAR ĐỔI MÀU THEO QUYỀN -->
-        <div class="topbar" style="background: {{ 'linear-gradient(135deg, #0f172a, #1e293b)' if session.role == 'admin' else 'linear-gradient(135deg, #10b981, #059669)' }}; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-            <h5 class="mb-0 fw-bold" style="color: white;">
-                <i class="fas fa-bolt text-warning me-2"></i>
-                {% if session.role == 'admin' %}
-                    Hệ Thống Quản Lý KTX (Admin)
-                {% else %}
-                    Phân Hệ Lễ Tân Tiếp Nhận
-                {% endif %}
-            </h5>
-            <div class="d-flex align-items-center gap-3">
-                <div class="text-end d-none d-md-block">
-                    <div class="fw-bold" style="color: white;">{{ session.hoten }}</div>
-                    <div class="badge {{ 'bg-danger' if session.role == 'admin' else 'bg-warning text-dark' }} text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;">
-                        {{ session.role }}
-                    </div>
-                </div>
-                <!-- AVATAR ĐỔI MÀU THEO QUYỀN -->
-                <div class="avatar" style="background: {{ 'linear-gradient(135deg, #6366f1, #38bdf8)' if session.role == 'admin' else 'linear-gradient(135deg, #f59e0b, #fbbf24)' }};">
-                    {{ session.hoten[0] }}
-                </div>
+                    <!-- MENU DÀNH RIÊNG CHO ADMIN -->
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.path == '/' else '' }}" href="{{ url_for('main.index') }}">
+                            <i class="fas fa-chart-pie me-1"></i> Tổng quan
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.path.startswith('/sinhvien') else '' }}" href="{{ url_for('sinhvien.list_sv') }}">
+                            <i class="fas fa-users me-1"></i> Sinh viên
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.path.startswith('/phong') else '' }}" href="{{ url_for('phong.list_p') }}">
+                            <i class="fas fa-bed me-1"></i> Phòng ở
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.path.startswith('/dangkyphong') else '' }}" href="{{ url_for('dangkyphong.list_dk') }}">
+                            <i class="fas fa-clipboard-list me-1"></i> Đăng ký ở
+                        </a>
+                    </li>
+
+                    <!-- THÔNG TIN ADMIN -->
+                    <li class="nav-item ms-lg-4">
+                        <span class="user-label">
+                            <i class="fas fa-user-shield text-warning me-1"></i> Quản trị viên
+                        </span>
+                    </li>
+
+                    <li class="nav-item ms-lg-3">
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-logout">
+                            <i class="fas fa-right-from-bracket me-1"></i> Đăng xuất
+                        </a>
+                    </li>
+
+                </ul>
             </div>
         </div>
-    {% else %}
-        <div class="container mt-5">
+    </nav>
     {% endif %}
+
+    <main class="flex-grow-1">
+        <div class="{% block container_class %}main-container{% endblock %}">
 
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
-                        {% for cat, msg in messages %}
-                            Toast.fire({ icon: '{{ "success" if cat == "success" else "error" if cat == "danger" else "info" }}', title: '{{ msg }}' });
-                        {% endfor %}
-                    });
-                </script>
+                    {% for cat, msg in messages %}
+                    <div class="alert alert-{{ cat }} alert-dismissible fade show" role="alert">
+                        {{ msg }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+                    </div>
+                    {% endfor %}
                 {% endif %}
             {% endwith %}
 
-            <div class="app-view">
-                {% block content %}{% endblock %}
-            </div>
+            {% block content %}{% endblock %}
 
-    {% if session.user %}
         </div>
-    </div>
-    {% else %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-main">
+            <div class="row g-4">
+
+                <div class="col-md-5">
+                    <h5><i class="fas fa-building me-2"></i>KTX SMART</h5>
+                    <p>Hệ thống quản lý ký túc xá sinh viên, hỗ trợ quản lý phòng ở và thông tin cư trú một cách thuận tiện, rõ ràng.</p>
+                </div>
+
+                <div class="col-md-3">
+                    <h5>Điều hướng</h5>
+                    <p><a href="{{ url_for('main.index') }}"><i class="fas fa-angle-right me-2"></i>Tổng quan</a></p>
+                    <p><a href="{{ url_for('sinhvien.list_sv') }}"><i class="fas fa-angle-right me-2"></i>Sinh viên</a></p>
+                    <p><a href="{{ url_for('dangkyphong.list_dk') }}"><i class="fas fa-angle-right me-2"></i>Đăng ký ở</a></p>
+                </div>
+
+                <div class="col-md-4">
+                    <h5>Thông tin liên hệ</h5>
+                    <p><i class="fas fa-phone me-2"></i> Hotline: (0262) 3855 000</p>
+                    <p><i class="fas fa-envelope me-2"></i> Email: ktx@smartdormitory.edu.vn</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> Địa chỉ: 567 Lê Duẩn, TP. Buôn Ma Thuột</p>
+                </div>
+
+            </div>
         </div>
-    {% endif %}
+
+        <div class="footer-bottom">
+            © 2026 KTX SMART System. All rights reserved.
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

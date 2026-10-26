@@ -1,82 +1,145 @@
 {% extends "base.html" %}
-{% block content %}
-<h4 class="fw-bold mb-4 text-dark"><i class="fas fa-chart-pie text-primary me-2"></i> Tổng quan hệ thống</h4>
 
-<!-- Hàng 1: 3 Thẻ thống kê -->
-<div class="row g-4 mb-4">
-    <div class="col-md-4">
-        <div class="card-custom p-4 d-flex align-items-center">
-            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                <i class="fas fa-users fa-2x"></i>
-            </div>
-            <div>
-                <h6 class="text-muted mb-1 fw-bold">Tổng Sinh Viên</h6>
-                <h2 class="mb-0 fw-bolder text-dark">{{ stats.sv }}</h2>
-            </div>
+{% block title %}Tổng quan - KTX SMART{% endblock %}
+
+{% block content %}
+<style>
+    /* Màu nền tổng thể */
+    body { background-color: #f4f7f9; }
+
+    /* TIÊU ĐỀ VÀ BREADCRUMB */
+    .dashboard-eyebrow { color: #64748B; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+    .dashboard-title { color: #163B65; font-weight: 800; font-size: 1.6rem; margin-bottom: 5px; }
+    .dashboard-subtitle { color: #64748B; font-size: 0.9rem; margin-bottom: 0; }
+
+    /* THẺ THỐNG KÊ */
+    .stat-card {
+        height: 100%; background: #fff; border: 1px solid #E5EAF1; border-radius: 12px; padding: 20px; transition: all 0.3s ease;
+    }
+    .stat-card:hover { box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06); }
+    
+    .stat-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 15px; }
+    .icon-blue { background: #EAF2FF; color: #2563EB; }
+    .icon-green { background: #E8F8EF; color: #15803D; }
+    .icon-orange { background: #FFF4E5; color: #C77700; }
+    .icon-purple { background: #F3E8FF; color: #7E22CE; }
+
+    .stat-label { color: #64748B; font-size: 0.85rem; font-weight: 600; margin-bottom: 10px; }
+    .stat-divider { width: 30px; height: 2px; background-color: #E2E8F0; border-radius: 2px; margin-bottom: 10px; }
+    .stat-number { color: #0f172a; font-size: 1.8rem; font-weight: 800; line-height: 1; margin-bottom: 8px; }
+    .stat-sub { color: #94A3B8; font-size: 0.75rem; }
+
+    /* BẢNG ĐĂNG KÝ GẦN ĐÂY */
+    .panel-card { background: #fff; border: 1px solid #E5EAF1; border-radius: 12px; padding: 20px; }
+    .panel-title { color: #163B65; font-size: 1.05rem; font-weight: 700; margin-bottom: 15px; }
+
+    .activity-table th { color: #64748B; font-size: 0.8rem; font-weight: 600; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px; }
+    .activity-table td { vertical-align: middle; padding: 12px 8px; border-bottom: 1px solid #F1F5F9; font-size: 0.9rem; }
+
+    .student-avatar { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 0.9rem; font-weight: 800; flex-shrink: 0; }
+    .avatar-color-1 { background: #EAF2FF; color: #2563EB; }
+    .avatar-color-2 { background: #E8F8EF; color: #15803D; }
+    .avatar-color-3 { background: #FFF4E5; color: #C77700; }
+    .avatar-color-4 { background: #F3E8FF; color: #7E22CE; }
+
+    .student-name { color: #1E293B; font-weight: 600; font-size: 0.9rem; }
+    .student-code { color: #94A3B8; font-size: 0.75rem; }
+    .room-badge { display: inline-block; padding: 4px 10px; background: #EAF2FF; color: #1D4ED8; border-radius: 6px; font-size: 0.8rem; font-weight: 700; }
+</style>
+
+<!-- TIÊU ĐỀ -->
+<div class="mb-4">
+    <div class="dashboard-eyebrow">TRANG QUẢN TRỊ / TỔNG QUAN</div>
+    <h1 class="dashboard-title">Tổng quan hệ thống</h1>
+    <p class="dashboard-subtitle">Theo dõi tình hình sinh viên và phòng ở ký túc xá.</p>
+</div>
+
+<!-- 4 THẺ THỐNG KÊ -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue"><i class="fas fa-users"></i></div>
+            <div class="stat-label">Tổng sinh viên</div>
+            <div class="stat-divider"></div>
+            <div class="stat-number">{{ stats.sv if stats else '-' }}</div>
+            <div class="stat-sub">Dữ liệu thực tế</div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card-custom p-4 d-flex align-items-center">
-            <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                <i class="fas fa-door-open fa-2x"></i>
-            </div>
-            <div>
-                <h6 class="text-muted mb-1 fw-bold">Tổng Số Phòng</h6>
-                <h2 class="mb-0 fw-bolder text-dark">{{ stats.phong }}</h2>
-            </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-green"><i class="fas fa-building"></i></div>
+            <div class="stat-label">Tổng số phòng</div>
+            <div class="stat-divider"></div>
+            <div class="stat-number">{{ stats.phong if stats else '-' }}</div>
+            <div class="stat-sub">Dữ liệu thực tế</div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card-custom p-4 d-flex align-items-center">
-            <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                <i class="fas fa-bed fa-2x"></i>
-            </div>
-            <div>
-                <h6 class="text-muted mb-1 fw-bold">Sinh Viên Đang Ở</h6>
-                <h2 class="mb-0 fw-bolder text-dark">{{ stats.dang_o }}</h2>
-            </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-orange"><i class="fas fa-bed"></i></div>
+            <div class="stat-label">Đang cư trú</div>
+            <div class="stat-divider"></div>
+            <div class="stat-number">{{ stats.dang_o if stats else '-' }}</div>
+            <div class="stat-sub">Dữ liệu thực tế</div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-purple"><i class="fas fa-chart-pie"></i></div>
+            <div class="stat-label">Tỷ lệ lấp đầy</div>
+            <div class="stat-divider"></div>
+            <div class="stat-number">{{ occupancy_rate if stats else '-' }}%</div>
+            <div class="stat-sub">Theo sức chứa phòng</div>
         </div>
     </div>
 </div>
 
-<!-- Hàng 2: Biểu đồ & Hoạt động -->
-<div class="row g-4">
-    <!-- Biểu đồ tỷ lệ lấp đầy -->
-    <div class="col-md-5">
-        <div class="card-custom p-4 h-100">
-            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-chart-pie text-primary me-2"></i>Tỷ lệ lấp đầy KTX</h6>
-            <div style="position: relative; height: 220px; width: 100%;">
-                <canvas id="occupancyChart"></canvas>
+<!-- BẢNG ĐĂNG KÝ GẦN ĐÂY -->
+<div class="row">
+    <div class="col-12">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="panel-title mb-0"><i class="fas fa-history text-primary me-2"></i>Đăng ký gần đây</h2>
+                <a href="{{ url_for('dangkyphong.list_dk') }}" class="btn btn-sm btn-outline-primary fw-bold" style="border-radius: 6px;">Xem tất cả</a>
             </div>
-            <div class="text-center mt-3">
-                <span class="badge bg-primary fs-6">{{ stats.dang_o }} / {{ total_cap }} Chỗ</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Hoạt động gần đây -->
-    <div class="col-md-7">
-        <div class="card-custom p-4 h-100">
-            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-history text-primary me-2"></i>Đăng ký phòng gần đây</h6>
+            
             <div class="table-responsive">
-                <table class="table table-sm table-borderless align-middle">
+                <table class="table table-borderless activity-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Sinh viên</th>
+                            <th>Phòng</th>
+                            <th>Ngày bắt đầu</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {% for act in recent_activities %}
                         <tr>
-                            <td style="width: 40px;">
-                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center fw-bold text-primary" style="width: 35px; height: 35px;">
-                                    {{ act.HoTen[0] }}
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="student-avatar avatar-color-{{ loop.index % 4 + 1 }}">
+                                        {{ act.HoTen[0] if act.HoTen else '?' }}
+                                    </div>
+                                    <div>
+                                        <div class="student-name">{{ act.HoTen }}</div>
+                                        <div class="student-code">Mã SV: {{ act.MaSV }}</div>
+                                    </div>
                                 </div>
                             </td>
                             <td>
-                                <div class="fw-bold text-dark">{{ act.HoTen }}</div>
-                                <div class="small text-muted">{{ act.MaSV }}</div>
+                                <span class="room-badge"><i class="fas fa-door-open me-1"></i> {{ act.SoPhong }}</span>
                             </td>
-                            <td class="text-center"><span class="badge bg-info text-dark">{{ act.SoPhong }}</span></td>
-                            <td class="text-end text-muted small"><i class="far fa-calendar-alt me-1"></i> {{ act.NgayBatDau }}</td>
+                            <td>
+                                <span class="text-muted small fw-bold"><i class="far fa-calendar me-1"></i> {{ act.NgayBatDau }}</span>
+                            </td>
                         </tr>
                         {% else %}
-                        <tr><td colspan="4" class="text-center text-muted py-3">Chưa có hoạt động nào.</td></tr>
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">
+                                <i class="fas fa-inbox fs-3 mb-2 text-secondary opacity-50"></i><br>
+                                Chưa có hoạt động đăng ký nào.
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -84,35 +147,4 @@
         </div>
     </div>
 </div>
-
-<!-- Thư viện vẽ biểu đồ và Script -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('occupancyChart').getContext('2d');
-        const rate = {{ occupancy_rate }};
-        const empty = 100 - rate;
-        
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Đã lấp đầy', 'Còn trống'],
-                datasets: [{
-                    data: [rate, empty],
-                    backgroundColor: ['#0ea5e9', '#e2e8f0'], /* Màu Xanh Teal và Xám */
-                    borderWidth: 0,
-                    cutout: '75%'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' },
-                    tooltip: { callbacks: { label: function(context) { return context.label + ': ' + context.raw + '%'; } } }
-                }
-            }
-        });
-    });
-</script>
 {% endblock %}
