@@ -1,3 +1,4 @@
+import mysql.connector
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from database.connection import get_db
 from utils.security import hash_password
@@ -31,12 +32,19 @@ def login():
         # .strip() giúp xóa dấu cách thừa nếu bạn gõ nhầm
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
-        
-        cur = get_db().cursor(dictionary=True)
-        cur.execute("SELECT * FROM Users WHERE username=%s AND password=%s", 
-                    (username, hash_password(password)))
-        user = cur.fetchone()
-        cur.close()
+
+        cur = None
+        try:
+            cur = get_db().cursor(dictionary=True)
+            cur.execute("SELECT * FROM Users WHERE username=%s AND password=%s",
+                        (username, hash_password(password)))
+            user = cur.fetchone()
+        except mysql.connector.Error:
+            flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng cấu hình MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD và MYSQL_DB trên Render.", "danger")
+            return render_template("auth/login.html"), 503
+        finally:
+            if cur is not None:
+                cur.close()
         
         if user:
             session["user"] = user["username"]
@@ -63,21 +71,27 @@ def change_password():
     if request.method == "POST":
         old_pass = request.form.get("old_password")
         new_pass = request.form.get("new_password")
-        
-        db = get_db()
-        cur = db.cursor(dictionary=True)
-        
-        cur.execute("SELECT * FROM Users WHERE username=%s AND password=%s", 
-                    (session["user"], hash_password(old_pass)))
-        if not cur.fetchone():
-            flash("Mật khẩu cũ không chính xác!", "danger")
-        else:
-            cur.execute("UPDATE Users SET password=%s WHERE username=%s", 
-                        (hash_password(new_pass), session["user"]))
-            db.commit()
-            flash("Đổi mật khẩu thành công! Hãy ghi nhớ mật khẩu mới.", "success")
-            return redirect(url_for("sinhvien.list_sv"))
-        cur.close()
+
+        cur = None
+        try:
+            db = get_db()
+            cur = db.cursor(dictionary=True)
+
+            cur.execute("SELECT * FROM Users WHERE username=%s AND password=%s",
+                        (session["user"], hash_password(old_pass)))
+            if not cur.fetchone():
+                flash("Mật khẩu cũ không chính xác!", "danger")
+            else:
+                cur.execute("UPDATE Users SET password=%s WHERE username=%s",
+                            (hash_password(new_pass), session["user"]))
+                db.commit()
+                flash("Đổi mật khẩu thành công! Hãy ghi nhớ mật khẩu mới.", "success")
+                return redirect(url_for("sinhvien.list_sv"))
+        except mysql.connector.Error:
+            flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng cấu hình các biến MYSQL_* trên Render.", "danger")
+        finally:
+            if cur is not None:
+                cur.close()
         
     return render_template("auth/change_password.html")
 # Tính năng phụ: Quên mật khẩu
@@ -85,25 +99,30 @@ def change_password():
 def forgot_password():
     if request.method == "POST":
         username = request.form.get("username", "").strip()
-        
-        db = get_db()
-        cur = db.cursor(dictionary=True)
-        
-        # Kiểm tra xem tài khoản có tồn tại không
-        cur.execute("SELECT * FROM Users WHERE username=%s", (username,))
-        user = cur.fetchone()
-        
-        if user:
-            # Đặt lại mật khẩu mặc định là 123456
-            new_pass = "123456"
-            cur.execute("UPDATE Users SET password=%s WHERE username=%s", 
-                        (hash_password(new_pass), username))
-            db.commit()
-            flash(f"Mật khẩu của bạn đã được đặt lại thành: {new_pass}. Hãy đăng nhập lại!", "success")
-            return redirect(url_for("auth.login"))
-        else:
-            flash("Tên đăng nhập không tồn tại trong hệ thống!", "danger")
-            
-        cur.close()
+
+        cur = None
+        try:
+            db = get_db()
+            cur = db.cursor(dictionary=True)
+
+            # Kiểm tra xem tài khoản có tồn tại không
+            cur.execute("SELECT * FROM Users WHERE username=%s", (username,))
+            user = cur.fetchone()
+
+            if user:
+                # Đặt lại mật khẩu mặc định là 123456
+                new_pass = "123456"
+                cur.execute("UPDATE Users SET password=%s WHERE username=%s",
+                            (hash_password(new_pass), username))
+                db.commit()
+                flash(f"Mật khẩu của bạn đã được đặt lại thành: {new_pass}. Hãy đăng nhập lại!", "success")
+                return redirect(url_for("auth.login"))
+            else:
+                flash("Tên đăng nhập không tồn tại trong hệ thống!", "danger")
+        except mysql.connector.Error:
+            flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng cấu hình các biến MYSQL_* trên Render.", "danger")
+        finally:
+            if cur is not None:
+                cur.close()
         
     return render_template("auth/forgot_password.html")
