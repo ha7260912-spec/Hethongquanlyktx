@@ -41,7 +41,7 @@ def login():
             user = cur.fetchone()
         except mysql.connector.Error:
             flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng cấu hình MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD và MYSQL_DB trên Render.", "danger")
-            return render_template("auth/login.html"), 503
+            return render_template("auth/login.html")
         finally:
             if cur is not None:
                 cur.close()
