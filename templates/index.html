@@ -1,118 +1,110 @@
 {% extends "base.html" %}
 {% block content %}
-<h4 class="fw-bold mb-4 text-dark"><i class="fas fa-chart-pie text-primary me-2"></i> Tổng quan hệ thống</h4>
+<div class="module-shell">
+    <section class="module-hero dashboard-hero mb-4">
+        <div>
+            <div class="page-kicker">Bảng điều khiển · {{ session.role }}</div>
+            <h2 class="hero-title">Mọi nhịp vận hành KTX,<br>gói gọn trong một góc nhìn.</h2>
+            <p class="hero-copy">Theo dõi sức chứa, sinh viên và các hoạt động mới nhất để đưa ra quyết định nhanh hơn mỗi ngày.</p>
+            <div class="hero-meta">
+                <span><i class="fas fa-circle-check"></i>Dữ liệu đang đồng bộ</span>
+                <span><i class="fas fa-shield-halved"></i>Không gian quản trị an toàn</span>
+            </div>
+        </div>
+        <div class="d-none d-lg-flex align-items-center justify-content-center" style="width:150px;height:150px;border:1px solid rgba(255,255,255,.14);border-radius:42px;background:rgba(255,255,255,.08);transform:rotate(8deg);">
+            <i class="fas fa-chart-simple" style="font-size:3.8rem;color:#8de9f4;transform:rotate(-8deg);"></i>
+        </div>
+    </section>
 
-<!-- Hàng 1: 3 Thẻ thống kê -->
-<div class="row g-4 mb-4">
-    <div class="col-md-4">
-        <div class="card-custom p-4 d-flex align-items-center">
-            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                <i class="fas fa-users fa-2x"></i>
-            </div>
-            <div>
-                <h6 class="text-muted mb-1 fw-bold">Tổng Sinh Viên</h6>
-                <h2 class="mb-0 fw-bolder text-dark">{{ stats.sv }}</h2>
-            </div>
+    <div class="metric-grid">
+        <div class="metric-tile">
+            <span class="metric-icon"><i class="fas fa-users"></i></span>
+            <div class="metric-label">Tổng sinh viên</div>
+            <div class="metric-value">{{ stats.sv }}</div>
+        </div>
+        <div class="metric-tile">
+            <span class="metric-icon" style="color:#12966f;background:#e7fbf4;"><i class="fas fa-building"></i></span>
+            <div class="metric-label">Tổng số phòng</div>
+            <div class="metric-value">{{ stats.phong }}</div>
+        </div>
+        <div class="metric-tile">
+            <span class="metric-icon" style="color:#b97815;background:#fff4dc;"><i class="fas fa-bed"></i></span>
+            <div class="metric-label">Đang lưu trú</div>
+            <div class="metric-value">{{ stats.dang_o }}</div>
+        </div>
+        <div class="metric-tile">
+            <span class="metric-icon" style="color:#1883a2;background:#e9fbff;"><i class="fas fa-chart-line"></i></span>
+            <div class="metric-label">Tỷ lệ lấp đầy</div>
+            <div class="metric-value">{{ occupancy_rate }}%</div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card-custom p-4 d-flex align-items-center">
-            <div class="bg-success bg-opacity-10 text-success rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                <i class="fas fa-door-open fa-2x"></i>
+
+    <div class="dashboard-grid mb-4">
+        <section class="workspace-card">
+            <div class="workspace-head">
+                <div><div class="page-kicker mb-1">Phân tích nhanh</div><h5>Tỷ lệ lấp đầy KTX</h5></div>
+                <span class="status-pill {{ 'success' if occupancy_rate < 85 else 'warning' }}">{{ 'Đang cân bằng' if occupancy_rate < 85 else 'Gần đầy' }}</span>
             </div>
-            <div>
-                <h6 class="text-muted mb-1 fw-bold">Tổng Số Phòng</h6>
-                <h2 class="mb-0 fw-bolder text-dark">{{ stats.phong }}</h2>
+            <div class="workspace-body">
+                <div class="chart-wrap">
+                    <canvas id="occupancyChart" aria-label="Biểu đồ tỷ lệ lấp đầy" role="img"></canvas>
+                    <div class="chart-center"><strong>{{ occupancy_rate }}%</strong><span>đã sử dụng</span></div>
+                </div>
+                <div class="d-flex justify-content-center gap-4 mt-2">
+                    <span class="small text-muted"><i class="fas fa-circle me-1" style="color:#6958e8;font-size:.55rem;"></i>Đã lấp đầy</span>
+                    <span class="small text-muted"><i class="fas fa-circle me-1" style="color:#e5e9f3;font-size:.55rem;"></i>Còn trống</span>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <section class="workspace-card">
+            <div class="workspace-head">
+                <div><div class="page-kicker mb-1">Activity feed</div><h5>Đăng ký phòng gần đây</h5></div>
+                <a href="{{ url_for('dangkyphong.list_dk') }}" class="btn btn-sm btn-outline-primary">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+            <div class="workspace-body pt-2 pb-2">
+                {% for act in recent_activities %}
+                <div class="activity-row">
+                    <div class="activity-avatar">{{ act.HoTen[0] }}</div>
+                    <div class="activity-copy"><strong>{{ act.HoTen }}</strong><span>Mã SV {{ act.MaSV }} · Phòng {{ act.SoPhong }}</span></div>
+                    <div class="activity-date"><i class="far fa-calendar me-1"></i>{{ act.NgayBatDau }}</div>
+                </div>
+                {% else %}
+                <div class="empty-state"><i class="fas fa-inbox"></i>Chưa có hoạt động đăng ký nào.</div>
+                {% endfor %}
+            </div>
+        </section>
     </div>
-    <div class="col-md-4">
-        <div class="card-custom p-4 d-flex align-items-center">
-            <div class="bg-warning bg-opacity-10 text-warning rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                <i class="fas fa-bed fa-2x"></i>
-            </div>
-            <div>
-                <h6 class="text-muted mb-1 fw-bold">Sinh Viên Đang Ở</h6>
-                <h2 class="mb-0 fw-bolder text-dark">{{ stats.dang_o }}</h2>
-            </div>
+
+    <section>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div><div class="page-kicker mb-1">Lối tắt</div><h5 class="mb-0" style="font-family:'Be Vietnam Pro',sans-serif;font-weight:800;">Truy cập nhanh</h5></div>
+            <span class="text-muted small">Các tác vụ thường dùng</span>
         </div>
-    </div>
+        <div class="quick-grid">
+            <a class="quick-link" href="{{ url_for('sinhvien.list_sv') }}"><i class="fas fa-users"></i><span>Quản lý sinh viên</span><i class="fas fa-arrow-up-right-from-square ms-auto" style="width:auto;height:auto;color:#a5aec4;background:transparent;font-size:.7rem;"></i></a>
+            <a class="quick-link" href="{{ url_for('phong.list_p') }}"><i class="fas fa-door-open"></i><span>Kiểm tra phòng</span><i class="fas fa-arrow-up-right-from-square ms-auto" style="width:auto;height:auto;color:#a5aec4;background:transparent;font-size:.7rem;"></i></a>
+            <a class="quick-link" href="{{ url_for('dangkyphong.list_dk') }}"><i class="fas fa-file-signature"></i><span>Đăng ký phòng</span><i class="fas fa-arrow-up-right-from-square ms-auto" style="width:auto;height:auto;color:#a5aec4;background:transparent;font-size:.7rem;"></i></a>
+            <a class="quick-link" href="{{ url_for('sudungdichvu.index') }}"><i class="fas fa-receipt"></i><span>Đối soát dịch vụ</span><i class="fas fa-arrow-up-right-from-square ms-auto" style="width:auto;height:auto;color:#a5aec4;background:transparent;font-size:.7rem;"></i></a>
+        </div>
+    </section>
 </div>
 
-<!-- Hàng 2: Biểu đồ & Hoạt động -->
-<div class="row g-4">
-    <!-- Biểu đồ tỷ lệ lấp đầy -->
-    <div class="col-md-5">
-        <div class="card-custom p-4 h-100">
-            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-chart-pie text-primary me-2"></i>Tỷ lệ lấp đầy KTX</h6>
-            <div style="position: relative; height: 220px; width: 100%;">
-                <canvas id="occupancyChart"></canvas>
-            </div>
-            <div class="text-center mt-3">
-                <span class="badge bg-primary fs-6">{{ stats.dang_o }} / {{ total_cap }} Chỗ</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Hoạt động gần đây -->
-    <div class="col-md-7">
-        <div class="card-custom p-4 h-100">
-            <h6 class="fw-bold text-dark mb-3"><i class="fas fa-history text-primary me-2"></i>Đăng ký phòng gần đây</h6>
-            <div class="table-responsive">
-                <table class="table table-sm table-borderless align-middle">
-                    <tbody>
-                        {% for act in recent_activities %}
-                        <tr>
-                            <td style="width: 40px;">
-                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center fw-bold text-primary" style="width: 35px; height: 35px;">
-                                    {{ act.HoTen[0] }}
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-bold text-dark">{{ act.HoTen }}</div>
-                                <div class="small text-muted">{{ act.MaSV }}</div>
-                            </td>
-                            <td class="text-center"><span class="badge bg-info text-dark">{{ act.SoPhong }}</span></td>
-                            <td class="text-end text-muted small"><i class="far fa-calendar-alt me-1"></i> {{ act.NgayBatDau }}</td>
-                        </tr>
-                        {% else %}
-                        <tr><td colspan="4" class="text-center text-muted py-3">Chưa có hoạt động nào.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Thư viện vẽ biểu đồ và Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('occupancyChart').getContext('2d');
-        const rate = {{ occupancy_rate }};
-        const empty = 100 - rate;
-        
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Đã lấp đầy', 'Còn trống'],
-                datasets: [{
-                    data: [rate, empty],
-                    backgroundColor: ['#0ea5e9', '#e2e8f0'], /* Màu Xanh Teal và Xám */
-                    borderWidth: 0,
-                    cutout: '75%'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' },
-                    tooltip: { callbacks: { label: function(context) { return context.label + ': ' + context.raw + '%'; } } }
-                }
-            }
-        });
+document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('occupancyChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const rate = Math.min(100, Math.max(0, Number({{ occupancy_rate }})));
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 260, 260);
+    gradient.addColorStop(0, '#8a72ff');
+    gradient.addColorStop(1, '#20c4d9');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels: ['Đã lấp đầy', 'Còn trống'], datasets: [{ data: [rate, 100 - rate], backgroundColor: [gradient, '#e9edf5'], borderWidth: 0, borderRadius: 8, spacing: 3 }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: (context) => `${context.label}: ${context.raw}%` } } } }
     });
+});
 </script>
 {% endblock %}

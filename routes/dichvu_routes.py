@@ -14,16 +14,15 @@ def index():
 @dichvu_bp.route("/them", methods=["POST"])
 def them():
     try:
-        dichvu_service.create(
-            request.form.get("ma_dv", ""),
+        ma_dv = dichvu_service.create(
             request.form.get("ten_dv", ""),
             request.form.get("don_gia", "")
         )
-        flash("Thêm dịch vụ thành công!", "success")
+        flash(f"Thêm dịch vụ thành công với mã {ma_dv}!", "success")
     except ValueError as e:
         flash(str(e), "error")
     except Exception:
-        flash("Không thể thêm dịch vụ. Có thể mã dịch vụ đã tồn tại.", "error")
+        flash("Không thể thêm dịch vụ. Vui lòng kiểm tra lại dữ liệu.", "error")
 
     return redirect(url_for("dichvu.index"))
 

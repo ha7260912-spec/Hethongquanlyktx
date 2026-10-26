@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="module-hero accent-green d-flex justify-content-between align-items-end gap-4">
     <div>
         <h3 class="fw-bold mb-1">Quản lý dịch vụ</h3>
         <p class="text-muted mb-0">Quản lý danh sách và đơn giá dịch vụ KTX</p>
@@ -10,7 +10,7 @@
 </div>
 
 <!-- Form thêm dịch vụ -->
-<div class="card shadow-sm border-0 mb-4">
+<div class="workspace-card mb-4">
     <div class="card-header bg-white py-3">
         <h5 class="mb-0">
             <i class="fas fa-plus-circle text-success me-2"></i>
@@ -21,15 +21,7 @@
     <div class="card-body">
         <form action="{{ url_for('dichvu.them') }}" method="POST">
             <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label class="form-label">Mã dịch vụ</label>
-                    <input type="text" name="ma_dv"
-                           class="form-control"
-                           placeholder="VD: DV04"
-                           maxlength="10" required>
-                </div>
-
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <label class="form-label">Tên dịch vụ</label>
                     <input type="text" name="ten_dv"
                            class="form-control"
@@ -37,7 +29,7 @@
                            maxlength="50" required>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="form-label">Đơn giá (VNĐ)</label>
                     <input type="number" name="don_gia"
                            class="form-control"
@@ -45,18 +37,19 @@
                            min="0" step="1" required>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <button type="submit" class="btn btn-success w-100">
                         <i class="fas fa-plus me-1"></i> Thêm
                     </button>
                 </div>
             </div>
+            <div class="form-text mt-3"><i class="fas fa-wand-magic-sparkles text-success me-1"></i>Mã dịch vụ sẽ được hệ thống tự động cấp theo thứ tự: <strong>DV01, DV02, DV03...</strong></div>
         </form>
     </div>
 </div>
 
 <!-- Danh sách dịch vụ -->
-<div class="card shadow-sm border-0">
+<div class="workspace-card">
     <div class="card-header bg-white py-3 d-flex justify-content-between">
         <h5 class="mb-0">
             <i class="fas fa-list text-primary me-2"></i>

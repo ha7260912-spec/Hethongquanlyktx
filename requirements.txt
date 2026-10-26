@@ -1,0 +1,4 @@
+Flask>=3.0,<4
+python-dotenv>=1.0,<2
+mysql-connector-python>=8.3,<10
+gunicorn>=21,<24

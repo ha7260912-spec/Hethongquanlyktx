@@ -29,15 +29,26 @@ def get_by_id(ma_dv):
         cursor.close()
 
 
-def create(ma_dv, ten_dv, don_gia):
+def create(ten_dv, don_gia):
     db = get_db()
-    cursor = db.cursor()
+    cursor = db.cursor(dictionary=True)
     try:
+        # Khóa danh sách mã trong cùng transaction để tránh trùng mã khi
+        # có hai thao tác thêm dịch vụ xảy ra gần như cùng lúc.
+        cursor.execute("SELECT MaDV FROM DichVu FOR UPDATE")
+        max_number = 0
+        for row in cursor.fetchall():
+            ma_dv = str(row["MaDV"] or "")
+            if ma_dv.upper().startswith("DV") and ma_dv[2:].isdigit():
+                max_number = max(max_number, int(ma_dv[2:]))
+
+        ma_dv = f"DV{max_number + 1:02d}"
         cursor.execute("""
             INSERT INTO DichVu (MaDV, TenDV, DonGia)
             VALUES (%s, %s, %s)
         """, (ma_dv, ten_dv, don_gia))
         db.commit()
+        return ma_dv
     except Exception:
         db.rollback()
         raise

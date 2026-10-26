@@ -6,12 +6,11 @@ def get_all():
     return dichvu_repo.get_all()
 
 
-def create(ma_dv, ten_dv, don_gia):
-    ma_dv = ma_dv.strip()
+def create(ten_dv, don_gia):
     ten_dv = ten_dv.strip()
 
-    if not ma_dv or not ten_dv:
-        raise ValueError("Mã và tên dịch vụ không được để trống.")
+    if not ten_dv:
+        raise ValueError("Tên dịch vụ không được để trống.")
 
     try:
         don_gia = int(don_gia)
@@ -21,10 +20,7 @@ def create(ma_dv, ten_dv, don_gia):
     if don_gia < 0:
         raise ValueError("Đơn giá không được âm.")
 
-    if dichvu_repo.get_by_id(ma_dv):
-        raise ValueError("Mã dịch vụ đã tồn tại.")
-
-    dichvu_repo.create(ma_dv, ten_dv, don_gia)
+    return dichvu_repo.create(ten_dv, don_gia)
 
 
 def update(ma_dv, ten_dv, don_gia):

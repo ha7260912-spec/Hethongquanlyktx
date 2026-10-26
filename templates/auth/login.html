@@ -1,157 +1,84 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-    /* Reset để trang login tràn viền màn hình */
-    body { background-color: #f8fafc; overflow: hidden; }
-    .login-container { height: 100vh; margin: 0; }
-    
-    /* BÊN TRÁI: Hình ảnh & Giới thiệu */
-    .login-left {
-        background: url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=2069&auto=format&fit=crop') center/cover no-repeat;
-        position: relative;
-        color: white;
-    }
-    /* Lớp phủ Gradient Xanh dương */
-    .login-left::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(14, 165, 233, 0.7) 100%);
-        z-index: 1;
-    }
-    .login-left-content {
-        position: relative;
-        z-index: 2;
-        padding: 60px;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    .feature-item { display: flex; align-items: center; margin-bottom: 20px; font-size: 1.1rem; font-weight: 500; }
-    .feature-icon { width: 45px; height: 45px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 1.2rem; color: #38bdf8; }
-
-    /* BÊN PHẢI: Form Đăng nhập */
-    .login-right {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        background: #ffffff;
-        box-shadow: -10px 0 30px rgba(0,0,0,0.05);
-        z-index: 3;
-    }
-    .form-wrapper { width: 100%; max-width: 400px; padding: 20px; }
-    
-    /* Input hiện đại (Đổi viền sang màu Xanh) */
-    .input-group-custom {
-        background: #f8fafc;
-        border: 2px solid #e2e8f0;
-        border-radius: 14px;
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
-    .input-group-custom:focus-within {
-        border-color: #0ea5e9;
-        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
-        background: #ffffff;
-    }
-    .input-group-text-custom { background: transparent; border: none; color: #94a3b8; padding-left: 15px; }
-    .form-control-custom { background: transparent; border: none; padding: 15px; font-weight: 500; }
-    .form-control-custom:focus { box-shadow: none; background: transparent; }
-    
-    /* Nút Đăng nhập Xanh dương */
-    .btn-login {
-        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-        border: none; border-radius: 14px; padding: 15px;
-        font-weight: 700; font-size: 1.1rem; color: white;
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
-    }
-    .btn-login:hover { 
-        transform: translateY(-3px); 
-        box-shadow: 0 15px 25px rgba(14, 165, 233, 0.5); 
-        color: white;
-    }
+    body { background: #f4f6fb; }
+    .login-shell { display: grid; min-height: 100vh; grid-template-columns: minmax(0, 1.15fr) minmax(420px, .85fr); background: #f4f6fb; }
+    .login-story { position: relative; display: flex; align-items: flex-end; min-height: 100vh; padding: clamp(34px, 6vw, 80px); overflow: hidden; color: #fff; background: linear-gradient(135deg, rgba(13, 20, 51, .92), rgba(59, 49, 148, .78)), url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?q=80&w=2069&auto=format&fit=crop') center/cover; }
+    .login-story::before { content: ''; position: absolute; top: -160px; right: -70px; width: 430px; height: 430px; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; box-shadow: 0 0 0 28px rgba(255,255,255,.04), 0 0 0 56px rgba(255,255,255,.025); animation: storyFloat 10s ease-in-out infinite; }
+    .login-story::after { content: ''; position: absolute; right: 13%; bottom: 16%; width: 110px; height: 110px; border-radius: 34px; background: linear-gradient(135deg, rgba(32,196,217,.55), rgba(138,114,255,.36)); transform: rotate(24deg); box-shadow: 0 25px 55px rgba(32,196,217,.2); }
+    @keyframes storyFloat { 50% { transform: translate(-16px, 12px) rotate(8deg); } }
+    .story-content { position: relative; z-index: 1; max-width: 620px; }
+    .story-brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 48px; color: #fff; font-family: 'Be Vietnam Pro', sans-serif; font-size: .88rem; font-weight: 800; letter-spacing: .14em; }
+    .story-brand i { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; color: #fff; border-radius: 13px; background: linear-gradient(135deg, #8a72ff, #20c4d9); box-shadow: 0 9px 22px rgba(32,196,217,.24); }
+    .story-kicker { margin-bottom: 14px; color: #8de9f4; font-size: .7rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+    .story-title { margin: 0 0 18px; color: #fff; font-family: 'Be Vietnam Pro', sans-serif; font-size: clamp(2.4rem, 5vw, 5rem); font-weight: 800; letter-spacing: -.065em; line-height: 1.04; }
+    .story-copy { max-width: 530px; margin: 0; color: #d6dcff; font-size: 1rem; line-height: 1.75; }
+    .story-stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+    .story-stat { min-width: 138px; padding: 13px 15px; border: 1px solid rgba(255,255,255,.16); border-radius: 16px; background: rgba(255,255,255,.09); backdrop-filter: blur(10px); }
+    .story-stat strong { display: block; color: #fff; font-family: 'Be Vietnam Pro', sans-serif; font-size: 1.05rem; }
+    .story-stat span { display: block; margin-top: 3px; color: #bdc7f0; font-size: .68rem; font-weight: 700; }
+    .login-panel { display: flex; align-items: center; justify-content: center; padding: 44px clamp(24px, 6vw, 80px); background: linear-gradient(150deg, #ffffff, #f8f9ff); }
+    .login-card { width: 100%; max-width: 420px; }
+    .mobile-brand { display: none; }
+    .login-eyebrow { margin-bottom: 12px; color: #6958e8; font-size: .68rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+    .login-title { margin: 0 0 10px; color: #17213f; font-family: 'Be Vietnam Pro', sans-serif; font-size: clamp(1.8rem, 3vw, 2.35rem); font-weight: 800; letter-spacing: -.05em; }
+    .login-subtitle { margin-bottom: 34px; color: #8b96b0; font-size: .84rem; line-height: 1.65; }
+    .login-field { margin-bottom: 18px; }
+    .login-field label { display: block; margin-bottom: 8px; color: #697592; font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .login-input { display: flex; align-items: center; gap: 10px; padding: 4px 8px 4px 14px; border: 1px solid #e1e6f2; border-radius: 14px; background: #fbfcff; transition: .2s ease; }
+    .login-input:focus-within { border-color: #aaa0ff; background: #fff; box-shadow: 0 0 0 4px rgba(105,88,232,.10); }
+    .login-input > i { width: 20px; color: #a7b0c6; text-align: center; }
+    .login-input input { width: 100%; min-height: 46px; color: #17213f; border: 0; outline: 0; background: transparent; font-size: .84rem; }
+    .password-toggle { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; color: #a7b0c6; border: 0; border-radius: 9px; background: transparent; cursor: pointer; transition: .2s ease; }
+    .password-toggle:hover { color: #6958e8; background: #efedff; }
+    .login-options { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 5px 0 25px; }
+    .login-options label { color: #8b96b0; font-size: .73rem; }
+    .login-options a { color: #6958e8; font-size: .73rem; font-weight: 800; text-decoration: none; }
+    .login-options a:hover { color: #4f43c6; text-decoration: underline; }
+    .login-submit { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 52px; border-radius: 15px; font-size: .88rem; }
+    .login-note { display: flex; align-items: center; gap: 7px; margin-top: 24px; color: #a0a9bc; font-size: .68rem; }
+    .login-note i { color: #25c699; }
+    @media (max-width: 900px) { .login-shell { display: block; } .login-story { display: none; } .login-panel { min-height: 100vh; padding: 35px 22px; } .mobile-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 44px; color: #17213f; font-family: 'Be Vietnam Pro', sans-serif; font-size: .9rem; font-weight: 800; letter-spacing: .1em; } .mobile-brand i { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; color: #fff; border-radius: 13px; background: linear-gradient(135deg, #6958e8, #20c4d9); } }
 </style>
 
-<div class="row login-container m-0">
-    <!-- BÊN TRÁI: ẢNH VÀ THÔNG TIN -->
-    <div class="col-lg-7 d-none d-lg-block login-left animate__animated animate__fadeInLeft">
-        <div class="login-left-content">
-            <div class="mb-5">
-                <div class="d-inline-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-circle mb-4" style="width: 70px; height: 70px;">
-                    <i class="fas fa-building fa-2x text-white"></i>
-                </div>
-                <h1 class="display-4 fw-bold mb-3">KTX Smart System</h1>
-                <p class="lead text-light opacity-75" style="max-width: 500px;">
-                    Nền tảng quản lý ký túc xá hiện đại, giúp việc quản lý sinh viên và phòng ở trở nên dễ dàng và chuyên nghiệp hơn bao giờ hết.
-                </p>
-            </div>
-            
-            <!-- Các tính năng nổi bật -->
-            <div class="mt-4">
-                <div class="feature-item animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
-                    <div class="feature-icon"><i class="fas fa-users"></i></div>
-                    <div>Quản lý hồ sơ sinh viên tập trung</div>
-                </div>
-                <div class="feature-item animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
-                    <div class="feature-icon"><i class="fas fa-door-open"></i></div>
-                    <div>Theo dõi tình trạng phòng ở trực quan</div>
-                </div>
-                <div class="feature-item animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
-                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                    <div>Bảo mật và phân quyền chặt chẽ</div>
-                </div>
+<div class="login-shell">
+    <section class="login-story">
+        <div class="story-content">
+            <div class="story-brand"><i class="fas fa-wand-magic-sparkles"></i>KTX NOVA</div>
+            <div class="story-kicker">Residence operations platform</div>
+            <h1 class="story-title">Vận hành<br><span style="color:#8de9f4;">thông minh hơn.</span></h1>
+            <p class="story-copy">Một không gian quản lý gọn gàng cho mọi nhịp sống trong ký túc xá — từ phòng ở, sinh viên đến từng lượt dịch vụ.</p>
+            <div class="story-stats">
+                <div class="story-stat"><strong><i class="fas fa-bolt me-1" style="color:#ffcf76;"></i>Realtime</strong><span>Dữ liệu cập nhật liên tục</span></div>
+                <div class="story-stat"><strong><i class="fas fa-layer-group me-1" style="color:#8de9f4;"></i>All-in-one</strong><span>Mọi tác vụ trong một nơi</span></div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- BÊN PHẢI: FORM ĐĂNG NHẬP -->
-    <div class="col-lg-5 login-right animate__animated animate__fadeInRight">
-        <div class="form-wrapper">
-            <div class="text-center mb-5 d-lg-none">
-                <!-- Logo cho màn hình điện thoại -->
-                <i class="fas fa-building fa-3x text-primary mb-3"></i>
-                <h3 class="fw-bold">KTX SYSTEM</h3>
-            </div>
-            
-            <div class="mb-5">
-                <h2 class="fw-bold text-dark mb-2">Đăng nhập 🔐</h2>
-                <p class="text-muted">Vui lòng nhập tài khoản để tiếp tục quản lý.</p>
-            </div>
+    <section class="login-panel">
+        <div class="login-card">
+            <div class="mobile-brand"><i class="fas fa-wand-magic-sparkles"></i>KTX NOVA</div>
+            <div class="login-eyebrow">Welcome back</div>
+            <h2 class="login-title">Đăng nhập vào không gian của bạn.</h2>
+            <p class="login-subtitle">Nhập thông tin tài khoản để tiếp tục quản lý vận hành KTX.</p>
 
             <form method="post">
-                <div class="mb-4">
-                    <label class="form-label text-muted fw-bold small">TÊN ĐĂNG NHẬP</label>
-                    <div class="input-group input-group-custom">
-                        <span class="input-group-text input-group-text-custom"><i class="fas fa-user"></i></span>
-                        <input type="text" name="username" class="form-control form-control-custom" required autofocus placeholder="Nhập tài khoản...">
-                    </div>
+                <div class="login-field">
+                    <label for="username">Tên đăng nhập</label>
+                    <div class="login-input"><i class="fas fa-user"></i><input type="text" id="username" name="username" required autofocus placeholder="Nhập tài khoản của bạn"></div>
                 </div>
-                
-                <div class="mb-4">
-                    <label class="form-label text-muted fw-bold small">MẬT KHẨU</label>
-                    <div class="input-group input-group-custom">
-                        <span class="input-group-text input-group-text-custom"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password" class="form-control form-control-custom" required placeholder="Nhập mật khẩu...">
-                    </div>
+                <div class="login-field">
+                    <label for="password">Mật khẩu</label>
+                    <div class="login-input"><i class="fas fa-lock"></i><input type="password" id="password" name="password" required placeholder="Nhập mật khẩu"><button class="password-toggle" type="button" data-password-toggle="password" aria-label="Hiện mật khẩu"><i class="far fa-eye"></i></button></div>
                 </div>
-
-                <!-- Các tính năng phụ trợ -->
-                <div class="d-flex justify-content-between align-items-center mb-5">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="rememberMe">
-                        <label class="form-check-label text-muted fw-medium small" for="rememberMe">Ghi nhớ đăng nhập</label>
-                    </div>
-                    <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none fw-bold small" style="color: #0ea5e9;">Quên mật khẩu?</a>
+                <div class="login-options">
+                    <label class="d-flex align-items-center gap-2"><input class="form-check-input mt-0" type="checkbox" id="rememberMe"> Ghi nhớ đăng nhập</label>
+                    <a href="{{ url_for('auth.forgot_password') }}">Quên mật khẩu?</a>
                 </div>
-
-                <button type="submit" class="btn btn-login w-100">
-                    Đăng Nhập <i class="fas fa-arrow-right ms-2"></i>
-                </button>
+                <button type="submit" class="btn btn-primary login-submit">Đăng nhập <i class="fas fa-arrow-right"></i></button>
             </form>
+            <div class="login-note"><i class="fas fa-shield-halved"></i> Phiên làm việc được bảo vệ và phân quyền theo vai trò.</div>
         </div>
-    </div>
+    </section>
 </div>
 {% endblock %}
