@@ -39,6 +39,10 @@ Nếu database không trống, chương trình kiểm tra các bảng cần thi�
 
 ## Giữ dữ liệu hiện tại
 
+Công cụ chuyển một lần: `python -m deployment.transfer`. Công cụ mở biểu mẫu chỉ trên `127.0.0.1`, nhận thông tin cloud trong bộ nhớ, dùng CA để xác minh TLS, chỉ ghi vào database đích trống. Nguồn local được đọc trong transaction nhất quán và không bị sửa. Sau khi chuyển, công cụ đối chiếu số bản ghi và kết quả 14 truy vấn cho tháng 10/2024, 10/2026. Nút **Verify existing transfer** chỉ đọc để kiểm tra toàn bộ bản ghi và báo cáo đã chuyển; không ghi đè dữ liệu đích. Dừng tiến trình bằng Ctrl+C sau khi hoàn tất.
+
+Database local và database cloud là hai bản độc lập sau khi chuyển. Để xem đúng dữ liệu website công khai bằng Workbench, tạo connection mới đến host/port MySQL cloud, dùng SSL và certificate CA của nhà cung cấp; không dùng connection localhost.
+
 Bootstrap chỉ tạo cấu trúc trống và admin mới. Muốn giữ dữ liệu local, dùng Workbench Data Export xuất database `ql_ktx` gồm cấu trúc, dữ liệu, trigger, routines và views; nhập vào MySQL cloud trước khi cho website sử dụng. Không import các lệnh DROP/CREATE database gốc vào database tên khác của nhà cung cấp. File export có dữ liệu cá nhân và hash mật khẩu: không commit vào repository công khai.
 
 Không chạy `sample_data.sql` trên database đang dùng. Database cũ chưa nâng cấp cần chạy `python -m database.manage migrate` với biến kết nối **trỏ đúng cloud** trong môi trường quản trị; lệnh có backup nhưng không tự chạy khi website khởi động.
