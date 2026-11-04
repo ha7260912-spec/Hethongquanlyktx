@@ -1,6 +1,29 @@
 
 {% extends "base.html" %}
 {% block content %}
+<style>
+    .service-catalog .workspace-card { border-radius: 22px; }
+    .service-catalog .card-header { padding: 20px 24px !important; border-bottom: 1px solid var(--line); border-radius: 22px 22px 0 0; }
+    .service-catalog .card-body { padding: 24px; }
+    .service-catalog .form-label { margin-bottom: 8px; font-size: .82rem; font-weight: 600; }
+    .service-catalog .form-control { min-height: 44px; padding: 10px 13px; border: 1px solid #dce2ed; border-radius: 10px; background: #fff; font-size: .88rem; transition: border-color .15s, box-shadow .15s; }
+    .service-catalog .form-control:focus { border-color: #8b80df; box-shadow: 0 0 0 3px rgba(105, 88, 232, .1); outline: none; }
+    .service-catalog .table-responsive { padding: 4px; }
+    .service-catalog .service-table { min-width: 800px; margin-bottom: 0; }
+    .service-catalog .service-table td { padding: 14px 12px; }
+    .service-catalog .service-name { min-width: 220px; }
+    .service-catalog .service-price { width: 180px; min-width: 160px; }
+    .service-catalog .service-price input { text-align: right; }
+    .service-catalog .service-actions { display: flex; justify-content: center; align-items: center; gap: 8px; white-space: nowrap; }
+    .service-catalog .service-actions form { margin: 0; }
+    .service-catalog .service-actions .btn { min-height: 40px; margin: 0; }
+    .service-catalog .service-add-button { min-height: 44px; border-radius: 10px; }
+    @media (max-width: 640px) {
+        .service-catalog .card-header { padding: 18px 16px !important; }
+        .service-catalog .card-body { padding: 16px; }
+    }
+</style>
+<div class="service-catalog">
 
 <div class="module-hero accent-green d-flex justify-content-between align-items-end gap-4">
     <div>
@@ -22,23 +45,23 @@
         <form action="{{ url_for('dichvu.them') }}" method="POST">
             <div class="row g-3 align-items-end">
                 <div class="col-md-5">
-                    <label class="form-label">Tên dịch vụ</label>
-                    <input type="text" name="ten_dv"
+                    <label class="form-label" for="serviceName">Tên dịch vụ</label>
+                    <input type="text" name="ten_dv" id="serviceName"
                            class="form-control"
                            placeholder="Nhập tên dịch vụ"
                            maxlength="50" required>
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Đơn giá (VNĐ)</label>
-                    <input type="number" name="don_gia"
+                    <label class="form-label" for="servicePrice">Đơn giá (VNĐ)</label>
+                    <input type="number" name="don_gia" id="servicePrice"
                            class="form-control"
                            placeholder="15000"
                            min="0" step="1" required>
                 </div>
 
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-success w-100">
+                    <button type="submit" class="btn btn-success w-100 service-add-button">
                         <i class="fas fa-plus me-1"></i> Thêm
                     </button>
                 </div>
@@ -61,13 +84,13 @@
 
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-hover table-bordered align-middle">
-                <thead class="table-dark">
+            <table class="table table-hover align-middle service-table">
+                <thead>
                     <tr>
                         <th class="text-center">STT</th>
                         <th>Mã dịch vụ</th>
-                        <th>Tên dịch vụ</th>
-                        <th class="text-end">Đơn giá (VNĐ)</th>
+                        <th class="service-name">Tên dịch vụ</th>
+                        <th class="text-end service-price">Đơn giá (VNĐ)</th>
                         <th class="text-center" style="width: 190px;">Thao tác</th>
                     </tr>
                 </thead>
@@ -82,7 +105,7 @@
                             </span>
                         </td>
 
-                        <td>
+                        <td class="service-name">
                             {% if dv.MaDV in ['XE_THANG', 'XE_PHAT'] %}
                             <strong>{{ dv.TenDV }}</strong>
                             {% else %}
@@ -90,28 +113,32 @@
                                   action="{{ url_for('dichvu.sua', ma_dv=dv.MaDV) }}"
                                   method="POST">
                                 <input type="text" name="ten_dv"
-                                       class="form-control form-control-sm"
+                                       class="form-control"
+                                       aria-label="Tên dịch vụ {{ dv.MaDV }}"
                                        value="{{ dv.TenDV }}"
                                        maxlength="50" required>
-                                <input type="number" name="don_gia"
-                                       class="form-control form-control-sm mt-2"
-                                       value="{{ dv.DonGia }}"
-                                       min="0" step="1" required>
                             </form>
                             {% endif %}
                         </td>
 
-                        <td class="text-end fw-semibold text-primary">
+                        <td class="text-end fw-semibold text-primary service-price">
+                            {% if dv.MaDV in ['XE_THANG', 'XE_PHAT'] %}
                             {{ "{:,.0f}".format(dv.DonGia) }}
+                            {% else %}
+                            <input type="number" name="don_gia" form="edit-{{ loop.index }}"
+                                   class="form-control" aria-label="Đơn giá dịch vụ {{ dv.MaDV }}"
+                                   value="{{ '{:.0f}'.format(dv.DonGia) }}" min="0" step="1" required>
+                            {% endif %}
                         </td>
 
                         <td class="text-center">
                             {% if dv.MaDV in ['XE_THANG', 'XE_PHAT'] %}
                             <span class="text-muted small">Cố định</span>
                             {% else %}
+                            <div class="service-actions">
                             <button type="submit"
                                     form="edit-{{ loop.index }}"
-                                    class="btn btn-sm btn-warning mb-1">
+                                    class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-save me-1"></i> Lưu sửa
                             </button>
 
@@ -119,10 +146,11 @@
                                   method="POST" class="d-inline"
                                   onsubmit="return confirm('Bạn có chắc muốn xóa dịch vụ này?')">
                                 <button type="submit"
-                                        class="btn btn-sm btn-danger mb-1">
+                                        class="btn btn-sm btn-outline-danger">
                                     <i class="fas fa-trash me-1"></i> Xóa
                                 </button>
                             </form>
+                            </div>
                             {% endif %}
                         </td>
                     </tr>
@@ -139,5 +167,5 @@
         </div>
     </div>
 </div>
-
+</div>
 {% endblock %}
