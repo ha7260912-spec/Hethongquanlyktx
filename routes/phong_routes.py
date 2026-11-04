@@ -6,14 +6,14 @@ bp = Blueprint("phong", __name__, url_prefix="/phong")
 
 @bp.route("/")
 @login_required
-@admin_required  # <-- Chặn Lễ tân xem danh sách phòng
+@admin_required
 def list_p():
     rows = phong_service.lay_danh_sach()
     return render_template("phong/list.html", rows=rows)
 
 @bp.route("/them", methods=["GET", "POST"])
 @login_required
-@admin_required  # <-- Chặn Lễ tân thêm phòng
+@admin_required
 def them_p():
     if request.method == "POST":
         data = {

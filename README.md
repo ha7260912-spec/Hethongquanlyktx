@@ -35,7 +35,7 @@ Tạo một database mới để nộp bài/demo độc lập (tên này phải 
 python -m database.manage init --database ql_ktx_demo --sample
 ```
 
-Sau đó đổi `MYSQL_DB=ql_ktx_demo` và chạy lại ứng dụng. Dữ liệu mẫu mới dùng **tháng 10/2026**, tài khoản `admin/admin123` và `letan/user123`. Đổi mật khẩu khi dùng ngoài môi trường demo.
+Sau đó đổi `MYSQL_DB=ql_ktx_demo` và chạy lại ứng dụng. Dữ liệu mẫu mới dùng **tháng 10/2026**, tài khoản `admin/admin123`. Đổi mật khẩu khi dùng ngoài môi trường demo.
 
 **Dữ liệu SQL cũ của bài nằm ở tháng 10/2024.** Khi xem bản dữ liệu cũ, chọn tháng 10, năm 2024. Các tháng không có phát sinh dịch vụ sẽ trả về 0 hoặc danh sách trống theo đúng điều kiện truy vấn.
 

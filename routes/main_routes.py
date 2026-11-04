@@ -6,7 +6,7 @@ bp = Blueprint("main", __name__)
 
 @bp.route("/")
 @login_required
-@admin_required  # <-- CHẶN LỄ TÂN TẠI ĐÂY
+@admin_required
 def index():
     try:
         db = get_db()

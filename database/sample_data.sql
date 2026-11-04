@@ -1,6 +1,6 @@
 -- Chi chay tren database demo trong, khong nap vao du lieu dang su dung.
 INSERT INTO Users(username,password,role,HoTen) VALUES
- ('admin',SHA2('admin123',256),'admin','Quản trị viên'),('letan',SHA2('user123',256),'user','Lễ tân');
+ ('admin',SHA2('admin123',256),'admin','Quản trị viên');
 INSERT INTO SinhVien(MaSV,SoCMT,HoTen,NgaySinh,Lop,QueQuan) VALUES
  ('SV01','000000000001','Nguyễn An','2006-01-01','D24CQCN01','Hà Nội'),
  ('SV02','000000000002','Trần Bình','2006-02-02','D24CQCN02','Hải Phòng'),
