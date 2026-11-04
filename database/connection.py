@@ -1,16 +1,10 @@
 import mysql.connector
 from flask import g
-from config import Config
+from config import Config, mysql_options
 
 def get_db():
     if "db" not in g:
-        g.db = mysql.connector.connect(
-            host=Config.MYSQL_HOST,
-            user=Config.MYSQL_USER,
-            password=Config.MYSQL_PASSWORD,
-            database=Config.MYSQL_DB,
-            charset="utf8mb4"
-        )
+        g.db = mysql.connector.connect(**mysql_options(Config.MYSQL_DB))
     return g.db
 
 def close_db(e=None):

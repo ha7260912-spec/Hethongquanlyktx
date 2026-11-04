@@ -11,6 +11,12 @@ sudungdichvu_bp = Blueprint(
 )
 
 
+@sudungdichvu_bp.before_request
+@login_required
+def require_access():
+    pass
+
+
 @sudungdichvu_bp.route("/")
 def index():
     return render_template(
@@ -24,18 +30,14 @@ def index():
 @sudungdichvu_bp.route("/hoa-don/<ma_sv>")
 @login_required
 def hoa_don(ma_sv):
-    chi_tiet = service.get_invoice(ma_sv)
-    if not chi_tiet:
-        flash("Sinh viên này chưa có lượt sử dụng dịch vụ.", "warning")
-        return redirect(url_for("sudungdichvu.index"))
-
-    return render_template(
-        "sudungdichvu/invoice.html",
-        thong_tin=chi_tiet[0],
-        chi_tiet=chi_tiet,
-        tong_tien=sum((row["ThanhTien"] or 0) for row in chi_tiet),
-        ngay_in=datetime.now(),
-        ma_hoa_don=f"HD-{ma_sv}-{datetime.now():%Y%m%d%H%M}",
+    today = datetime.now()
+    return redirect(
+        url_for(
+            "billing.detail",
+            ma_sv=ma_sv,
+            month=request.args.get("month", type=int) or today.month,
+            year=request.args.get("year", type=int) or today.year,
+        )
     )
 
 

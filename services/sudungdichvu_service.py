@@ -6,8 +6,17 @@ def get_all():
     return repo.get_all()
 
 
-def get_invoice(ma_sv):
-    return repo.get_invoice((ma_sv or "").strip())
+def get_invoice(ma_sv, month=None, year=None):
+    ma_sv = (ma_sv or "").strip()
+    if month and year:
+        month = int(month)
+        year = int(year)
+        if month < 1 or month > 12:
+            raise ValueError("Tháng không hợp lệ.")
+        start = datetime(year, month, 1)
+        end = datetime(year + (month == 12), 1 if month == 12 else month + 1, 1)
+        return repo.get_invoice(ma_sv, start, end)
+    return repo.get_invoice(ma_sv)
 
 
 def get_sinhvien():

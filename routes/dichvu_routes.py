@@ -1,8 +1,16 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from services import dichvu_service
+from routes.auth_routes import login_required, admin_required
 
 dichvu_bp = Blueprint("dichvu", __name__, url_prefix="/dich-vu")
+
+
+@dichvu_bp.before_request
+@login_required
+@admin_required
+def require_access():
+    pass
 
 
 @dichvu_bp.route("/")

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module-hero d-flex justify-content-between align-items-end gap-4">
+    <div>
+        <div class="page-kicker">Billing · Monthly cycle</div>
+        <h1 class="page-title mb-2">Hóa đơn tháng</h1>
+        <p class="text-muted mb-0">Tổng hợp tiền phòng, dịch vụ và phí gửi xe của sinh viên.</p>
+    </div>
+    {% if session.role == 'admin' %}<form method="POST" action="{{ url_for('billing.tao_tat_ca') }}" class="d-flex gap-2 align-items-end">
+        <input type="hidden" name="month" value="{{ month }}">
+        <input type="hidden" name="year" value="{{ year }}">
+        <button class="btn btn-primary" onclick="return confirm('Tạo hoặc cập nhật hóa đơn cho tất cả sinh viên?')">
+            <i class="fas fa-rotate me-2"></i>Tạo hóa đơn tháng
+        </button>
+    </form>{% endif %}
+</div>
+
+<div class="card card-custom p-4 mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+        <div class="col-sm-3">
+            <label class="form-label">Tháng</label>
+            <select name="month" class="form-select">
+                {% for m in range(1, 13) %}
+                <option value="{{ m }}" {% if m == month %}selected{% endif %}>Tháng {{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-sm-3">
+            <label class="form-label">Năm</label>
+            <input type="number" name="year" class="form-control" min="2020" max="2100" value="{{ year }}">
+        </div>
+        <div class="col-sm-2">
+            <button class="btn btn-outline-primary"><i class="fas fa-filter me-2"></i>Lọc dữ liệu</button>
+        </div>
+        <div class="col-sm-2"><label class="form-label">Trạng thái</label><select class="form-select" name="status"><option value="">Tất cả</option><option value="unpaid" {% if status=='unpaid' %}selected{% endif %}>Chưa thanh toán</option><option value="paid" {% if status=='paid' %}selected{% endif %}>Đã thanh toán</option><option value="overdue" {% if status=='overdue' %}selected{% endif %}>Quá hạn</option></select></div>
+        <div class="col-sm-2"><label class="form-label">Mã SV</label><input class="form-control" name="ma_sv" value="{{ student_id or '' }}" maxlength="10" placeholder="Tất cả"></div>
+    </form>
+</div>
+
+<div class="card card-custom overflow-hidden">
+    <div class="toolbar">
+        <div>
+            <div class="fw-bold fs-5">Danh sách hóa đơn {{ '%02d'|format(month) }}/{{ year }}</div>
+            <div class="text-muted small">Mỗi sinh viên tối đa một hóa đơn trong một tháng.</div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Mã HĐ</th><th>Sinh viên</th><th>Lớp</th>
+                    <th class="text-end">Tổng tiền</th><th>Trạng thái</th><th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in invoices %}
+                <tr>
+                    <td>#{{ row.MaHD }}</td>
+                    <td><strong>{{ row.HoTen }}</strong><div class="text-muted small">{{ row.MaSV }}</div></td>
+                    <td>{{ row.Lop or '—' }}</td>
+                    <td class="text-end fw-bold">{{ "{:,.0f}".format(row.TongTien or 0) }} đ</td>
+                    <td>
+                        {% if row.TrangThai == 'paid' %}<span class="badge text-bg-success">Đã thanh toán</span>
+                        {% elif row.TrangThai == 'overdue' %}<span class="badge text-bg-danger">Quá hạn</span>
+                        {% else %}<span class="badge text-bg-warning">Chưa thanh toán</span>{% endif %}
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('billing.detail', ma_sv=row.MaSV, month=month, year=year) }}"><i class="fas fa-eye"></i></a>
+                        {% if row.TrangThai != 'paid' and session.role == 'admin' %}
+                        <form method="POST" class="d-inline" action="{{ url_for('billing.mark_paid', ma_hd=row.MaHD) }}" onsubmit="return confirm('Xác nhận đã thanh toán?')">
+                            <input type="hidden" name="month" value="{{ month }}"><input type="hidden" name="year" value="{{ year }}">
+                            <button class="btn btn-sm btn-outline-success"><i class="fas fa-check"></i></button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-5">Chưa có hóa đơn. Hãy bấm “Tạo hóa đơn tháng”.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

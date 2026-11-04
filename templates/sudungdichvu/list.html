@@ -47,7 +47,6 @@
     <div class="toolbar">
         <div>
             <div class="fw-bold fs-5">Lịch sử sử dụng</div>
-            <div class="text-muted small">Danh sách giao dịch dịch vụ mới nhất</div>
         </div>
         <div class="input-group toolbar-search">
             <span class="input-group-text bg-transparent border-end-0"><i class="fas fa-search text-muted"></i></span>
@@ -117,13 +116,16 @@
     </div>
 </div>
 
-<!-- Modal thêm -->
-<div class="modal fade" id="modalThem" tabindex="-1">
+{% endblock %}
+
+{% block modals %}
+<!-- Render directly under body so the backdrop cannot cover this dialog. -->
+<div class="modal fade" id="modalThem" tabindex="-1" aria-labelledby="modalThemTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content service-modal">
             <form method="POST" action="{{ url_for('sudungdichvu.them') }}">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">Thêm lượt sử dụng</h5>
+                    <h5 class="modal-title fw-bold" id="modalThemTitle">Thêm lượt sử dụng</h5>
                     <button type="button" class="btn-close"
                             data-bs-dismiss="modal"></button>
                 </div>
@@ -160,7 +162,6 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="form-text">Gõ từ khóa để lọc nhanh danh sách dịch vụ.</div>
                     </div>
 
                     <div class="mb-3">
@@ -191,13 +192,13 @@
 
 <!-- Modal sửa từng bản ghi -->
 {% for r in danh_sach %}
-<div class="modal fade" id="modalSua{{ r.MaSD }}" tabindex="-1">
+<div class="modal fade" id="modalSua{{ r.MaSD }}" tabindex="-1" aria-labelledby="modalSuaTitle{{ r.MaSD }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content service-modal">
             <form method="POST"
                   action="{{ url_for('sudungdichvu.sua', ma_sd=r.MaSD) }}">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold">
+                    <h5 class="modal-title fw-bold" id="modalSuaTitle{{ r.MaSD }}">
                         Sửa lượt sử dụng #{{ r.MaSD }}
                     </h5>
                     <button type="button" class="btn-close"
@@ -234,7 +235,6 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="form-text">Gõ từ khóa để đổi dịch vụ.</div>
                     </div>
 
                     <div class="mb-3">
@@ -265,7 +265,9 @@
     </div>
 </div>
 {% endfor %}
+{% endblock %}
 
+{% block scripts %}
 <style>
     .page-kicker i { animation: sparklePulse 1.8s ease-in-out infinite; }
     @keyframes sparklePulse { 0%, 100% { transform: scale(1) rotate(0); opacity: .75; } 50% { transform: scale(1.18) rotate(12deg); opacity: 1; } }
@@ -278,6 +280,7 @@
     .service-modal .modal-title { color: #fff; }
     .service-modal .btn-close { filter: invert(1); opacity: .82; }
     .service-modal .modal-footer { background: #fbfbfe; }
+    .service-modal > form { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
     .service-picker { position: relative; }
     .service-search { padding-right: 42px; border-radius: 12px; }
     .service-search:focus { border-color: #9b9ef7; box-shadow: 0 0 0 .2rem rgba(91,92,226,.12); }

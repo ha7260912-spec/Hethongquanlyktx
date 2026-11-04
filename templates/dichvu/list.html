@@ -43,7 +43,6 @@
                     </button>
                 </div>
             </div>
-            <div class="form-text mt-3"><i class="fas fa-wand-magic-sparkles text-success me-1"></i>Mã dịch vụ sẽ được hệ thống tự động cấp theo thứ tự: <strong>DV01, DV02, DV03...</strong></div>
         </form>
     </div>
 </div>
@@ -84,6 +83,9 @@
                         </td>
 
                         <td>
+                            {% if dv.MaDV in ['XE_THANG', 'XE_PHAT'] %}
+                            <strong>{{ dv.TenDV }}</strong>
+                            {% else %}
                             <form id="edit-{{ loop.index }}"
                                   action="{{ url_for('dichvu.sua', ma_dv=dv.MaDV) }}"
                                   method="POST">
@@ -96,6 +98,7 @@
                                        value="{{ dv.DonGia }}"
                                        min="0" step="1" required>
                             </form>
+                            {% endif %}
                         </td>
 
                         <td class="text-end fw-semibold text-primary">
@@ -103,6 +106,9 @@
                         </td>
 
                         <td class="text-center">
+                            {% if dv.MaDV in ['XE_THANG', 'XE_PHAT'] %}
+                            <span class="text-muted small">Cố định</span>
+                            {% else %}
                             <button type="submit"
                                     form="edit-{{ loop.index }}"
                                     class="btn btn-sm btn-warning mb-1">
@@ -111,12 +117,13 @@
 
                             <form action="{{ url_for('dichvu.xoa', ma_dv=dv.MaDV) }}"
                                   method="POST" class="d-inline"
-                                  onsubmit="return confirm('Bố có chắc muốn xóa dịch vụ này?')">
+                                  onsubmit="return confirm('Bạn có chắc muốn xóa dịch vụ này?')">
                                 <button type="submit"
                                         class="btn btn-sm btn-danger mb-1">
                                     <i class="fas fa-trash me-1"></i> Xóa
                                 </button>
                             </form>
+                            {% endif %}
                         </td>
                     </tr>
                     {% else %}

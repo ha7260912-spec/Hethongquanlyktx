@@ -1,3 +1,5 @@
+import os
+import mysql.connector
 from flask import Flask
 from config import Config
 from database import connection
@@ -5,6 +7,10 @@ from database import connection
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    if os.getenv("APP_ENV") == "production" and (
+        not app.secret_key or app.secret_key == "dev" or len(app.secret_key) < 32
+    ):
+        raise RuntimeError("Production requires SECRET_KEY with at least 32 characters.")
     
     # Khởi tạo kết nối Database
     connection.init_app(app)
@@ -35,6 +41,25 @@ def create_app():
     app.register_blueprint(xe_bp)
     from routes.luotguixe_routes import luotguixe_bp
     app.register_blueprint(luotguixe_bp)
+    from routes.billing_routes import bp as billing_bp
+    from routes.report_routes import bp as report_bp
+    app.register_blueprint(billing_bp)
+    app.register_blueprint(report_bp)
+    from routes.ticket_routes import bp as ticket_bp
+    app.register_blueprint(ticket_bp)
+
+    @app.get("/healthz")
+    def health():
+        try:
+            cursor = connection.get_db().cursor()
+            try:
+                cursor.execute("SELECT 1 FROM Users LIMIT 1")
+                cursor.fetchall()
+            finally:
+                cursor.close()
+        except mysql.connector.Error:
+            return {"status": "unavailable"}, 503
+        return {"status": "ok"}
 
     return app
 

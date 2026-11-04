@@ -46,9 +46,8 @@
                 <div>
                     <div class="fw-bold text-dark">Phí gửi được tính tự động</div>
                     <div class="small text-muted mt-1">
-                        Lượt đầu của một biển số trong ngày: <strong>3.000 đ</strong>.
-                        Các lượt tiếp theo trong cùng ngày: <strong>miễn phí</strong>.
-                        Mỗi ngày mới cộng thêm <strong>3.000 đ</strong>.
+                        Hai lượt đầu trong ngày: <strong>miễn phí</strong>. Từ lượt thứ 3: <strong>3.000 đ/lượt</strong>.
+                        Ngày mới bắt đầu lại hạn mức miễn phí; phí phát sinh được cộng vào hóa đơn tháng.
                     </div>
                     {% if action == 'Sửa' and luot.get('SoTien') is not none %}
                     <div class="mt-2 text-primary fw-bold">Phí hiện tại: {{ "{:,.0f}".format(luot.get('SoTien') or 0) }} đ</div>

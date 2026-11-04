@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="module-hero"><div><h1 class="page-title">Vé gửi xe tháng</h1><p class="mb-0">100.000đ/xe/tháng · Mỗi sinh viên tối đa 2 vé đang hoạt động trong một tháng.</p></div></div>
+<div class="form-card mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+        <div class="col-md-3"><label class="form-label" for="ticketMonth">Tháng</label><input id="ticketMonth" class="form-control" name="month" type="number" min="1" max="12" value="{{ month }}" required></div>
+        <div class="col-md-3"><label class="form-label" for="ticketYear">Năm</label><input id="ticketYear" class="form-control" name="year" type="number" min="2000" max="2100" value="{{ year }}" required></div>
+        <div class="col-md-3"><button class="btn btn-outline-primary">Xem kỳ vé</button></div>
+    </form>
+    <hr>
+    <form method="POST" class="row g-3 align-items-end">
+        <input type="hidden" name="month" value="{{ month }}"><input type="hidden" name="year" value="{{ year }}">
+        <div class="col-md-8"><label class="form-label" for="ticketCar">Đăng ký xe cho tháng {{ month }}/{{ year }}</label><select id="ticketCar" class="form-select" name="BienSo" required><option value="">Chọn xe</option>{% for car in cars %}<option value="{{ car.BienSo }}">{{ car.BienSo }} · {{ car.HoTen }} ({{ car.MaSV }})</option>{% endfor %}</select></div>
+        <div class="col-md-4"><button class="btn btn-primary">Đăng ký / gia hạn vé tháng</button></div>
+    </form>
+</div>
+<div class="workspace-card table-responsive"><table class="table mb-0"><thead><tr><th>Sinh viên</th><th>Biển số</th><th>Kỳ vé</th><th>Phí</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+{% for row in tickets %}<tr><td>{{ row.HoTen }} · {{ row.MaSV }}</td><td>{{ row.BienSo }}</td><td>{{ row.KyThang.strftime('%m/%Y') }}</td><td>{{ '{:,.0f}'.format(row.DonGia) }}đ</td><td>{{ 'Đang hoạt động' if row.TrangThai == 'active' else 'Đã hủy' }}</td><td>{% if row.TrangThai == 'active' %}<form method="POST" action="{{ url_for('ticket.cancel',ticket_id=row.MaDKXe) }}"><input type="hidden" name="month" value="{{ month }}"><input type="hidden" name="year" value="{{ year }}"><button class="btn btn-sm btn-outline-danger">Hủy vé chưa sử dụng</button></form>{% endif %}</td></tr>
+{% else %}<tr><td colspan="6" class="text-center py-4">Chưa có đăng ký trong tháng.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

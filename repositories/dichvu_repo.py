@@ -57,6 +57,8 @@ def create(ten_dv, don_gia):
 
 
 def update(ma_dv, ten_dv, don_gia):
+    if ma_dv in ("XE_THANG", "XE_PHAT"):
+        raise ValueError("Đơn giá gửi xe được cố định theo đề: 100.000đ/tháng và 3.000đ/lượt vượt.")
     db = get_db()
     cursor = db.cursor()
     try:
@@ -75,6 +77,8 @@ def update(ma_dv, ten_dv, don_gia):
 
 
 def delete(ma_dv):
+    if ma_dv in ("XE_THANG", "XE_PHAT"):
+        raise ValueError("Không được xóa danh mục phí xe của hệ thống.")
     db = get_db()
     cursor = db.cursor()
     try:

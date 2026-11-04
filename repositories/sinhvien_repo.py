@@ -9,7 +9,8 @@ def get_all(search="", page=1, per_page=10):
     sql = """
         SELECT sv.*, p.SoPhong 
         FROM SinhVien sv
-        LEFT JOIN DangKyPhong dk ON sv.MaSV = dk.MaSV AND dk.NgayKetThuc IS NULL
+        LEFT JOIN DangKyPhong dk ON sv.MaSV = dk.MaSV AND dk.NgayBatDau<=CURDATE()
+          AND (dk.NgayKetThuc IS NULL OR dk.NgayKetThuc>=CURDATE())
         LEFT JOIN Phong p ON dk.SoPhong = p.SoPhong
         WHERE sv.MaSV LIKE %s OR sv.HoTen LIKE %s 
         ORDER BY sv.MaSV LIMIT %s OFFSET %s

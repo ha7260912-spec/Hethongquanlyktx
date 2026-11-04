@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 invoice-actions">
+    <div>
+        <div class="page-kicker">Invoice detail</div>
+        <h1 class="page-title mb-1">Hóa đơn {{ '%02d'|format(invoice.month) }}/{{ invoice.year }}</h1>
+        <p class="text-muted mb-0">{{ invoice.student.HoTen }} · {{ invoice.student.MaSV }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('billing.index', month=invoice.month, year=invoice.year) }}" class="btn btn-light border">Quay lại</a>
+        <button class="btn btn-outline-primary" type="button" onclick="window.print()">In hóa đơn</button>
+        {% if session.role == 'admin' and invoice.trang_thai != 'paid' %}<form method="POST" action="{{ url_for('billing.save', ma_sv=invoice.student.MaSV) }}">
+            <input type="hidden" name="month" value="{{ invoice.month }}">
+            <input type="hidden" name="year" value="{{ invoice.year }}">
+            <button class="btn btn-primary"><i class="fas fa-save me-2"></i>{{ 'Cập nhật hóa đơn từ phát sinh' if invoice.persisted else 'Lưu hóa đơn' }}</button>
+        </form>{% endif %}
+    </div>
+</div>
+
+<p class="invoice-meta">{{ 'Hóa đơn #' ~ invoice.ma_hd if invoice.persisted else 'BẢN TÍNH TẠM — chưa lưu' }} · {{ invoice.student.HoTen }} ({{ invoice.student.MaSV }}) · Tháng {{ invoice.month }}/{{ invoice.year }} · {{ 'Đã thanh toán' if invoice.trang_thai == 'paid' else 'Chưa thanh toán' if invoice.persisted else 'Chưa lập hóa đơn' }}</p>
+{% if invoice.persisted %}<p class="text-muted small invoice-note">Chi tiết bên dưới được đọc từ hóa đơn đã lưu. Hóa đơn chưa thanh toán chỉ thay đổi khi bạn chọn cập nhật từ phát sinh.</p>{% endif %}
+<div class="card card-custom overflow-hidden invoice-paper">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>#</th><th>Khoản thu</th><th>Thời gian</th><th class="text-end">SL</th><th class="text-end">Đơn giá</th><th class="text-end">Thành tiền</th></tr></thead>
+            <tbody>
+                {% for row in invoice.details %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><strong>{{ row.MoTa }}</strong><div class="text-muted small">{{ row.LoaiKhoan }}</div></td>
+                    <td>{{ row.ThoiGian.strftime('%d/%m/%Y %H:%M') if row.ThoiGian else '—' }}</td>
+                    <td class="text-end">{{ row.SoLuong }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(row.DonGia or 0) }} đ</td>
+                    <td class="text-end fw-bold">{{ "{:,.0f}".format(row.ThanhTien or 0) }} đ</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-5">Không phát sinh khoản thu trong tháng.</td></tr>
+                {% endfor %}
+            </tbody>
+            <tfoot><tr><th colspan="5" class="text-end">TỔNG THANH TOÁN</th><th class="text-end fs-5 text-primary">{{ "{:,.0f}".format(invoice.total or 0) }} đ</th></tr></tfoot>
+        </table>
+    </div>
+</div>
+<style>@media print { .sidebar,.topbar,.invoice-actions,.invoice-note { display:none!important } .main{margin:0;padding:0} .invoice-paper {box-shadow:none;border-radius:0} .table {font-size:11pt} }</style>
+{% endblock %}

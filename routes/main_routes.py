@@ -19,7 +19,7 @@ def index():
         cur.execute("SELECT COUNT(*) as c FROM Phong")
         phong = cur.fetchone()['c']
         
-        cur.execute("SELECT COUNT(DISTINCT MaSV) as c FROM DangKyPhong WHERE NgayKetThuc IS NULL")
+        cur.execute("SELECT COUNT(DISTINCT MaSV) as c FROM DangKyPhong WHERE NgayBatDau<=CURDATE() AND (NgayKetThuc IS NULL OR NgayKetThuc>=CURDATE())")
         dang_o = cur.fetchone()['c']
         
         # 2. Tính tổng sức chứa để vẽ biểu đồ tỷ lệ lấp đầy

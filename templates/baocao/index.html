@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="module-hero">
+    <div><div class="page-kicker">Cơ sở dữ liệu · 4 truy vấn bắt buộc + 10 bổ sung</div><h1 class="page-title">Báo cáo & truy vấn</h1><p class="mb-0">Chọn truy vấn, kỳ báo cáo và xem kết quả cùng câu SQL.</p></div>
+    <button class="btn btn-outline-primary" onclick="window.print()">In kết quả</button>
+</div>
+<div class="form-card mb-4 report-controls">
+<form method="GET" class="row g-3 align-items-end">
+    <div class="col-12"><label class="form-label" for="reportQuery">Truy vấn</label><select class="form-select" id="reportQuery" name="query">{% for key,item in report.catalog.items() %}<option value="{{ key }}" {% if key == report.key %}selected{% endif %}>{{ key }} · {{ item.title }}</option>{% endfor %}</select></div>
+    <div class="col-md-2"><label class="form-label" for="reportMonth">Tháng</label><input id="reportMonth" class="form-control" type="number" name="month" min="1" max="12" value="{{ report.month }}" required></div>
+    <div class="col-md-2"><label class="form-label" for="reportYear">Năm</label><input id="reportYear" class="form-control" type="number" name="year" min="2000" max="2100" value="{{ report.year }}" required></div>
+    <div class="col-md-4"><label class="form-label" for="reportMode">Khoảng thời gian cho truy vấn theo ngày</label><select id="reportMode" class="form-select" name="mode"><option value="month" {% if report.mode=='month' %}selected{% endif %}>Tháng đã chọn</option><option value="week" {% if report.mode=='week' %}selected{% endif %}>Tuần chứa ngày mốc (thứ Hai–Chủ nhật)</option><option value="range" {% if report.mode=='range' %}selected{% endif %}>Từ ngày đến ngày</option></select></div>
+    <div class="col-md-4"><label class="form-label" for="reportAnchor">Ngày mốc cho báo cáo tuần</label><input id="reportAnchor" class="form-control" type="date" name="anchor" value="{{ report.anchor }}"></div>
+    <div class="col-md-3"><label class="form-label" for="reportStart">Từ ngày</label><input id="reportStart" class="form-control" type="date" name="start" value="{{ report.start.isoformat() if report.start else '' }}"></div>
+    <div class="col-md-3"><label class="form-label" for="reportEnd">Đến hết ngày</label><input id="reportEnd" class="form-control" type="date" name="end" value="{{ report.end.isoformat() if report.end else '' }}"></div>
+    <div class="col-md-3"><label class="form-label" for="reportStudent">Mã SV (Q01–Q03)</label><input id="reportStudent" class="form-control" name="ma_sv" maxlength="10" value="{{ report.student_id or '' }}" placeholder="Để trống: tất cả"></div>
+    <div class="col-md-3"><button class="btn btn-primary">Chạy truy vấn</button></div>
+</form>
+</div>
+<div class="workspace-card">
+<div class="workspace-head"><div><h5>{{ report.key }} · {{ report.title }}</h5><p class="small text-muted mb-0">{% if report.scope == 'year' %}Năm {{ report.year }}{% elif report.scope == 'month' %}Tháng {{ '%02d'|format(report.month) }}/{{ report.year }}{% else %}{{ report.start or '' }} → {{ report.end or '' }}{% endif %} · {{ report.rows|length }} dòng kết quả</p></div></div>
+{% set money_columns = ['TienPhong','TienDichVu','TienVeXe','PhiVuotLuot','TongTien','DoanhThu','DonGia','DonGiaApDung','TongPhi','TongNo','ThangTruoc','ChenhLech'] %}
+<div class="table-responsive"><table class="table table-hover mb-0">
+<thead><tr>{% for col in report.columns %}<th>{{ col }}</th>{% endfor %}</tr></thead>
+<tbody>{% for row in report.rows %}<tr>{% for col in report.columns %}<td>{% if row[col] is none %}—{% elif col in money_columns %}{{ '{:,.0f}'.format(row[col]) }} đ{% else %}{{ row[col] }}{% endif %}</td>{% endfor %}</tr>{% else %}<tr><td colspan="{{ report.columns|length or 1 }}" class="text-center py-4 text-muted">Không có dữ liệu phù hợp.</td></tr>{% endfor %}</tbody>
+</table></div>
+</div>
+{% if report.sql %}<details class="form-card mt-4 report-sql"><summary>Xem SQL của {{ report.key }}</summary><pre class="mt-3 mb-0" style="white-space:pre-wrap">{{ report.sql }};</pre></details>{% endif %}
+<style>@media print { .sidebar,.topbar,.report-controls,.report-sql,.module-hero button {display:none!important} .main {margin:0;padding:0} .workspace-card{box-shadow:none} }</style>
+{% endblock %}

@@ -40,7 +40,7 @@ def login():
                         (username, hash_password(password)))
             user = cur.fetchone()
         except mysql.connector.Error:
-            flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng cấu hình MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD và MYSQL_DB trên Render.", "danger")
+            flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng liên hệ quản trị viên.", "danger")
             return render_template("auth/login.html")
         finally:
             if cur is not None:
@@ -88,7 +88,7 @@ def change_password():
                 flash("Đổi mật khẩu thành công! Hãy ghi nhớ mật khẩu mới.", "success")
                 return redirect(url_for("sinhvien.list_sv"))
         except mysql.connector.Error:
-            flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng cấu hình các biến MYSQL_* trên Render.", "danger")
+            flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng liên hệ quản trị viên.", "danger")
         finally:
             if cur is not None:
                 cur.close()
@@ -97,32 +97,5 @@ def change_password():
 # Tính năng phụ: Quên mật khẩu
 @bp.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-
-        cur = None
-        try:
-            db = get_db()
-            cur = db.cursor(dictionary=True)
-
-            # Kiểm tra xem tài khoản có tồn tại không
-            cur.execute("SELECT * FROM Users WHERE username=%s", (username,))
-            user = cur.fetchone()
-
-            if user:
-                # Đặt lại mật khẩu mặc định là 123456
-                new_pass = "123456"
-                cur.execute("UPDATE Users SET password=%s WHERE username=%s",
-                            (hash_password(new_pass), username))
-                db.commit()
-                flash(f"Mật khẩu của bạn đã được đặt lại thành: {new_pass}. Hãy đăng nhập lại!", "success")
-                return redirect(url_for("auth.login"))
-            else:
-                flash("Tên đăng nhập không tồn tại trong hệ thống!", "danger")
-        except mysql.connector.Error:
-            flash("Chưa kết nối được cơ sở dữ liệu. Vui lòng cấu hình các biến MYSQL_* trên Render.", "danger")
-        finally:
-            if cur is not None:
-                cur.close()
-        
-    return render_template("auth/forgot_password.html")
+    flash("Vui lòng liên hệ quản trị viên để được cấp lại mật khẩu.", "info")
+    return redirect(url_for("auth.login"))
